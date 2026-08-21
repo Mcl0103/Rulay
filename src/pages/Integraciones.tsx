@@ -1,4 +1,4 @@
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { ArrowLeft, MessageCircle, Sheet, Zap, Check } from "lucide-react"
 import { Link } from "react-router-dom"
 import { Sidebar } from "../components/Sidebar"
@@ -11,15 +11,31 @@ const proximamente = [
 ]
 
 export function Integraciones() {
-  const [connected, setConnected] = useState(false)
+  const [domain, setDomain] = useState<string | null>(null)
   const [connecting, setConnecting] = useState(false)
+  const [loaded, setLoaded] = useState(false)
+
+  useEffect(() => {
+    setDomain(localStorage.getItem("rulay_store_domain"))
+    setLoaded(true)
+  }, [])
+
+  useEffect(() => {
+    if (!loaded) return
+    if (domain) localStorage.setItem("rulay_store_domain", domain)
+    else localStorage.removeItem("rulay_store_domain")
+  }, [domain, loaded])
 
   function handleConnect() {
     setConnecting(true)
     setTimeout(() => {
       setConnecting(false)
-      setConnected(true)
+      setDomain("mi-tienda.myshopify.com")
     }, 900)
+  }
+
+  function handleDisconnect() {
+    setDomain(null)
   }
 
   return (
@@ -55,7 +71,7 @@ export function Integraciones() {
                 <div>
                   <div className="flex items-center gap-2">
                     <p className="text-base font-medium text-white">Shopify</p>
-                    {connected && (
+                    {domain && (
                       <span className="flex items-center gap-1 rounded-full bg-emerald-500/10 px-2 py-0.5 text-[11px] text-emerald-400">
                         <Check className="h-3 w-3" />
                         Conectada
@@ -69,8 +85,11 @@ export function Integraciones() {
                 </div>
               </div>
 
-              {connected ? (
-                <button className="shrink-0 rounded-full border border-white/15 px-4 py-1.5 text-xs font-medium text-(--color-muted) transition hover:border-white/30 hover:text-white">
+              {domain ? (
+                <button
+                  onClick={handleDisconnect}
+                  className="shrink-0 rounded-full border border-white/15 px-4 py-1.5 text-xs font-medium text-(--color-muted) transition hover:border-white/30 hover:text-white"
+                >
                   Desconectar
                 </button>
               ) : (
@@ -90,14 +109,15 @@ export function Integraciones() {
               )}
             </div>
 
-            {connected && (
+            {domain && (
               <div className="relative mt-5 flex items-center gap-3 rounded-xl border border-white/10 bg-white/5 px-4 py-3">
                 <div className="h-2 w-2 shrink-0 rounded-full bg-emerald-400" />
-                <p className="text-xs text-(--color-muted)">
-                  mi-tienda.myshopify.com
-                </p>
+                <p className="flex-1 text-xs text-(--color-muted)">{domain}</p>
               </div>
             )}
+            <p className="relative mt-3 text-xs text-(--color-muted-2)">
+              Por ahora puedes conectar una tienda a la vez — si cambias de tienda, desconecta esta y conecta la nueva.
+            </p>
           </div>
 
           {/* Próximamente */}
