@@ -1,8 +1,66 @@
 import { useEffect, useRef, useState } from "react"
 import { Link } from "react-router-dom"
+import { Menu, X } from "lucide-react"
 import { Logo } from "../components/Logo"
+import { Loader } from "../components/Loader"
 
 const SOURCES = ["AliExpress", "Amazon", "Shopify", "Dropi", "Aliclik", "TikTok Shop"]
+
+const LOGO_ASCII = ` ;-l\`.              ....
+ "fo%apZCcr|[~!:'               ..
+   :Y$$$$$$$$$@8#hp0Yx\\{_i:\`.              ..
+     >Q$$%BBB@$$$$$$$$$$$@%Mhp0Yn/{_i;\`.          .
+       ]b$$B@@@@@@BBBBBB@@$$$$$$$$$$@%Mhp0Yn/{_!^
+        .\\#$$B@@@@@@@@@@@@@@@BBBBBB@@$$$$$$$$$$BMpc]\`
+          "v%$@BBBB@@@@@@@@@@@@@@@@@@@@@BBBBBB@$$$$$*vI
+            !L$$$$$$$$$@BBBBBB@@@@@@@@@@@@@@@@@@@BB@$$8r
+              ~jcCmb*&B$$$$$$$$$$$@@BBBBBB@@@@@@@@@@@B$$0'
+                    '"l<])fvJZdaW%$$$$$$$$$$@@@@@@@@@@@B$J
+               ..              .^I>-1tuY0paW$@@@@@@@@@@@B$-
+                         ...              '"j@@@@@@@@@@@B@X
+                                   ...'..   IB@@@@@@@@@@@$Z
+                                .        \`![J@@@@@@@@@@@B@C
+                         ..        'l?tYq#B$$@@@@@@@@@@@B\${
+                   ..        ^i[jUq#B$$$$$$BB@@@@@@@@@BB$Q
+                      .:~)uQbW@$$$$$$@BBB@@@@@@@@@@@B@$$J'
+                  </zma8$$$$$$@BBBB@@@@@@@@@@@BBB@$$$$p{
+                 _$$$$$$@BBB@@@@@@@@@@@BBBB@$$$$$$&dv+
+                 {$BBB@@@@@@@@@@@@@@@@$$$$$@WbQu)~,
+                 [$@@@@@@@@@@@@@@@@@@@awJj}i"       .
+                 }$@@@@@@@@$$B@@@@@@@@U'       ..
+                 }$@@@@@@@$ok$@@@@@@@@$a]  .
+                 }@B@@@@@B$m'X$$B@@@@@B$$z^
+                 {$$$BBB@B$p  ]o$B@@@@@@@$a?
+                 iOaB$$$$@@w . "J$$B@@@@@B$$c\` .
+                   .l[x0a%$b     )W$B@@@@@@@$h-
+                        .I}}      IZ$@@@@@@@B$@c\`
+                      .          .  jB$B@@@@@@@$k_
+                                     ~k$@BBB@@@B$@v'
+                                      'X$$$$$$@@BB$k+
+                                        -rUwa&$$$$$$$c'
+                                            ."i]\\vQp*$h].
+                                         .          \`I]\\: \``
+
+const SPARKLE_ASCII = `                  <umkkqY[
+                 v$$$$$$$$p;
+              . 1$BBBBBBBB$q
+              . b@B@@@@@@@B$- .
+            .  ($B@@@@@@@@B@p  .
+      ..     ./B@@@@@@@@@@@B$O;      .
+          ^<fk$@@@@@@@@@@@@@B$&Y];.
+     <\\c0bW$$$B@@@@@@@@@@@@@@B$$$%oqCx]^
+   }k$$$$$$@BB@@@@@@@@@@@@@@@@@BB$$$$$$Mj
+  ]$$BBBBB@@@@@@@@@@@@@@@@@@@@@@@@BBBBB@$( .
+. {$$@BBBBB@@@@@@@@@@@@@@@@@@@@@@BBBBB@$$) .
+   |h@$$$$$$BB@@@@@@@@@@@@@@@@BB$$$$$$@h|
+     i{jz0k&$$@B@@@@@@@@@@@@B@$$8kQcf{i
+           :[J%$B@@@@@@@@@@B$@L[:
+      ...     !q$B@@@@@@@@B$o+     ...
+             . 'h@B@@@@@@@B8l .
+              . -$BB@@@@@%$x .
+                 C$$@BB@$$k\`
+                 .n#$$$$WY"
+                   '<][~^\``
 
 const CONSOLE_LINES = [
   { color: "text-(--color-muted-2)", prefix: "$", text: "pegaste el link de tu producto" },
@@ -81,7 +139,22 @@ function GlowBlob({
   )
 }
 
+const NAV_LINKS = [
+  { href: "#producto", label: "Producto" },
+  { href: "#diferencia", label: "Por qué Rulay" },
+  { href: "#plata", label: "Sin cuentas raras" },
+  { href: "#precios", label: "Precios" },
+]
+
 export function Landing() {
+  const [menuOpen, setMenuOpen] = useState(false)
+  const [ready, setReady] = useState(false)
+
+  useEffect(() => {
+    const t = setTimeout(() => setReady(true), 550)
+    return () => clearTimeout(t)
+  }, [])
+
   return (
     <div className="min-h-screen overflow-x-hidden">
       {/* La landing es blanca a propósito (data-theme="light" fijo, no ligado al
@@ -89,18 +162,40 @@ export function Landing() {
           y usa sus propios colores literales — y la última sección antes de él
           hace el degradado de blanco a negro. */}
       <div data-theme="light" className="bg-(--color-base) text-(--color-text)">
+        <Loader show={!ready} variant="dark" />
       {/* ---------- Nav ---------- */}
       <header className="sticky top-3.5 z-50 px-6">
-        <div className="mx-auto flex max-w-5xl items-center justify-between gap-4 rounded-full border border-(--color-border) bg-(--color-panel)/75 px-4 py-2.5 backdrop-blur-xl shadow-[0_12px_30px_-14px_rgba(0,0,0,0.6)]">
+        <div className="mx-auto max-w-5xl">
+        <div className="flex items-center justify-between gap-4 rounded-full border border-(--color-border) bg-(--color-panel)/75 px-4 py-2.5 backdrop-blur-xl shadow-[0_12px_30px_-14px_rgba(0,0,0,0.6)]">
           <Link to="/" className="flex shrink-0 items-center gap-2 text-[15px] font-extrabold tracking-tight">
-            <Logo className="h-6.5 w-6.5" />
+            <Logo className="h-6.5 w-6.5" variant="dark" />
             <span>Rulay.AI</span>
           </Link>
-          <nav className="hidden items-center gap-6 text-sm text-(--color-muted) md:flex">
-            <a href="#producto" className="transition hover:text-(--color-text)">Producto</a>
-            <a href="#diferencia" className="transition hover:text-(--color-text)">Por qué Rulay</a>
-            <a href="#plata" className="transition hover:text-(--color-text)">Sin cuentas raras</a>
-            <a href="#precios" className="transition hover:text-(--color-text)">Precios</a>
+          <nav className="hidden items-center gap-1 rounded-full bg-(--color-panel-2) p-1 text-sm text-(--color-muted) md:flex">
+            <a
+              href="#producto"
+              className="rounded-full bg-(--color-text) px-3.5 py-1.5 font-semibold text-(--color-panel) transition"
+            >
+              Producto
+            </a>
+            <a
+              href="#diferencia"
+              className="rounded-full px-3.5 py-1.5 transition hover:bg-(--color-panel) hover:text-(--color-text)"
+            >
+              Por qué Rulay
+            </a>
+            <a
+              href="#plata"
+              className="rounded-full px-3.5 py-1.5 transition hover:bg-(--color-panel) hover:text-(--color-text)"
+            >
+              Sin cuentas raras
+            </a>
+            <a
+              href="#precios"
+              className="rounded-full px-3.5 py-1.5 transition hover:bg-(--color-panel) hover:text-(--color-text)"
+            >
+              Precios
+            </a>
           </nav>
           <div className="flex shrink-0 items-center gap-2">
             <Link
@@ -115,29 +210,73 @@ export function Landing() {
             >
               Comenzar ahora
             </Link>
+            <button
+              type="button"
+              onClick={() => setMenuOpen((v) => !v)}
+              aria-label={menuOpen ? "Cerrar menú" : "Abrir menú"}
+              className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full text-(--color-text) transition hover:bg-(--color-panel-2) md:hidden"
+            >
+              {menuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
+            </button>
           </div>
+        </div>
+
+        {/* ---- mobile dropdown ---- */}
+        <div
+          className={`overflow-hidden transition-all duration-300 ease-out md:hidden ${
+            menuOpen ? "mt-2 max-h-80 opacity-100" : "max-h-0 opacity-0"
+          }`}
+        >
+          <nav className="flex flex-col gap-1 rounded-2xl border border-(--color-border) bg-(--color-panel)/95 p-2 text-sm text-(--color-muted) backdrop-blur-xl shadow-[0_12px_30px_-14px_rgba(0,0,0,0.6)]">
+            {NAV_LINKS.map((link) => (
+              <a
+                key={link.href}
+                href={link.href}
+                onClick={() => setMenuOpen(false)}
+                className="rounded-xl px-3.5 py-2.5 transition hover:bg-(--color-panel-2) hover:text-(--color-text)"
+              >
+                {link.label}
+              </a>
+            ))}
+            <div className="my-1 border-t border-(--color-border)" />
+            <Link
+              to="/login"
+              className="rounded-xl px-3.5 py-2.5 transition hover:bg-(--color-panel-2) hover:text-(--color-text)"
+            >
+              Iniciar sesión
+            </Link>
+          </nav>
+        </div>
         </div>
       </header>
 
       {/* ---------- Hero ---------- */}
       <section className="relative overflow-hidden px-6 pt-20 pb-12">
         <GlowBlob className="left-1/2 -top-24" opacity={0.55} />
-        <div className="relative mx-auto max-w-3xl text-center">
-          <span className="mb-6 inline-flex items-center gap-2 rounded-full border border-(--color-accent)/30 bg-(--color-accent)/10 px-3.5 py-1.5 text-xs text-(--color-accent-2)">
-            <span className="rounded-full bg-(--color-accent) px-2 py-0.5 text-[11px] font-bold text-white">Nuevo</span>
-            Landing por secciones ya disponible
-          </span>
+        <pre
+          aria-hidden="true"
+          className="t-float-x-a pointer-events-none absolute top-4 right-[6%] select-none font-mono text-[6px] leading-[6px] text-(--color-accent)/20 sm:top-6 sm:right-[16%] sm:text-[9px] sm:leading-[9px]"
+        >
+          {LOGO_ASCII}
+        </pre>
+        <pre
+          aria-hidden="true"
+          className="t-float-x-b pointer-events-none absolute top-24 left-[4%] select-none font-mono text-[6px] leading-[6px] text-(--color-accent)/20 sm:top-32 sm:left-[14%] sm:text-[9px] sm:leading-[9px]"
+        >
+          {SPARKLE_ASCII}
+        </pre>
+        <div className={`t-stagger hero-stagger relative mx-auto max-w-3xl text-center ${ready ? "is-shown" : ""}`}>
 
-          <h1 className="mx-auto max-w-[16ch] text-[2.15rem] leading-[1.04] font-extrabold tracking-tight sm:text-6xl">
-            Tu página se ve igual a la de medio nicho. Por eso dejó de vender.
+          <h1 className="t-stagger-line t-stagger-line--1 mx-auto max-w-[16ch] text-[2.15rem] leading-[1.04] font-black tracking-tight sm:text-6xl">
+            No te falta buen ojo. Te falta{" "}
+            <span className="font-serif text-(--color-accent) italic font-medium">tiempo</span> para testearlo todo.
           </h1>
 
-          <p className="mx-auto mt-5 max-w-md text-base text-(--color-muted) sm:text-lg">
-            El algoritmo ya vio ese layout — con otro nombre, ayer. Rulay te arma una página de producto real, con
-            precio, variantes y botón de compra, no una landing bonita que tu cliente ya conoce de memoria.
+          <p className="t-stagger-line t-stagger-line--2 mx-auto mt-5 max-w-md text-(--color-muted) sm:text-lg">
+            Testea diez productos en lo que antes te tomaba armar uno.
           </p>
 
-          <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
+          <div className="t-stagger-line t-stagger-line--3 mt-8 flex flex-wrap items-center justify-center gap-3">
             <Link
               to="/login"
               className="rounded-xl bg-gradient-to-b from-(--color-accent-2) to-(--color-accent) px-6 py-3 text-sm font-semibold text-white shadow-[0_8px_20px_-8px_rgba(59,130,246,0.6)] transition hover:brightness-110 active:scale-[0.98]"
@@ -151,10 +290,10 @@ export function Landing() {
               Ver cómo funciona
             </a>
           </div>
-          <p className="mt-3 text-xs text-(--color-muted-2)">Sin suscripción · sin letra chica · sin compromiso mensual</p>
+          <p className="t-stagger-line t-stagger-line--4 mt-3 text-xs text-(--color-muted-2)">Sin suscripción · sin letra chica · sin compromiso mensual</p>
 
           {/* ---- floating console + chips ---- */}
-          <div className="relative mx-auto mt-12 max-w-[600px]">
+          <div className="t-stagger-line t-stagger-line--5 relative mx-auto mt-12 max-w-[600px]">
             <div className="pointer-events-none absolute -top-6 -left-10 hidden rotate-[-6deg] items-center gap-2 rounded-full border border-(--color-border) bg-(--color-panel-2) px-3.5 py-2 text-xs font-semibold text-(--color-muted) shadow-lg lg:flex">
               <span className="h-1.5 w-1.5 rounded-full bg-(--color-accent-2)" />
               Página de producto
@@ -191,7 +330,7 @@ export function Landing() {
           </div>
 
           {/* ---- source marquee ---- */}
-          <div className="mt-14 pt-7">
+          <div className="t-stagger-line t-stagger-line--6 mt-14 pt-7">
             <p className="mb-4 text-center font-mono text-[11px] tracking-wide text-(--color-muted-2)">
               GENERA PÁGINAS DESDE
             </p>

@@ -207,6 +207,44 @@ body {
   will-change: transform, opacity, filter;
 }
 .t-stagger-line--2 { transition-delay: var(--stagger-stagger); }
+.t-stagger-line--3 { transition-delay: calc(var(--stagger-stagger) * 2); }
+.t-stagger-line--4 { transition-delay: calc(var(--stagger-stagger) * 3); }
+.t-stagger-line--5 { transition-delay: calc(var(--stagger-stagger) * 4); }
+.t-stagger-line--6 { transition-delay: calc(var(--stagger-stagger) * 5); }
+.t-stagger-line--7 { transition-delay: calc(var(--stagger-stagger) * 6); }
+
+/* Hero usa un stagger más lento y espaciado que el default de la app —
+   se lee mejor en un bloque grande de entrada que en un header chico. */
+.hero-stagger {
+  --stagger-stagger: 100ms;
+  --stagger-dur: 700ms;
+  --stagger-distance: 16px;
+}
+
+@keyframes loader-spin {
+  to { transform: rotate(360deg); }
+}
+.t-loader-ring-pro {
+  background: conic-gradient(from 0deg, transparent 0%, var(--color-accent) 92%, var(--color-accent) 100%);
+  animation: loader-spin 0.85s linear infinite;
+}
+@media (prefers-reduced-motion: reduce) {
+  .t-loader-ring-pro { animation: none; }
+}
+
+@keyframes float-x-a {
+  0%, 100% { transform: translateX(-8px); }
+  50% { transform: translateX(8px); }
+}
+@keyframes float-x-b {
+  0%, 100% { transform: translateX(7px); }
+  50% { transform: translateX(-7px); }
+}
+.t-float-x-a { animation: float-x-a 8s ease-in-out infinite; }
+.t-float-x-b { animation: float-x-b 9.5s ease-in-out infinite; }
+@media (prefers-reduced-motion: reduce) {
+  .t-float-x-a, .t-float-x-b { animation: none; }
+}
 
 .t-stagger.is-shown .t-stagger-line {
   opacity: 1;

@@ -1,6 +1,7 @@
 import { useState } from "react"
 import { Mail } from "lucide-react"
 import { Logo } from "../components/Logo"
+import { Loader } from "../components/Loader"
 import { useAuth } from "../lib/auth"
 
 const copyByMode = {
@@ -25,7 +26,13 @@ export function Login() {
   const [sent, setSent] = useState(false)
   const [sending, setSending] = useState(false)
   const [error, setError] = useState<string | null>(null)
+  const [redirecting, setRedirecting] = useState(false)
   const copy = copyByMode[mode]
+
+  async function handleGoogleClick() {
+    setRedirecting(true)
+    await signInWithGoogle()
+  }
 
   async function handleMagicLink(e: React.FormEvent) {
     e.preventDefault()
@@ -42,6 +49,7 @@ export function Login() {
 
   return (
     <div className="flex min-h-screen items-center justify-center bg-(--color-base) px-6">
+      <Loader show={redirecting} />
       <div className="relative w-full max-w-sm overflow-hidden rounded-2xl border border-(--color-border) bg-(--color-panel)">
         <div
           aria-hidden="true"
@@ -60,8 +68,9 @@ export function Login() {
           </p>
 
           <button
-            onClick={signInWithGoogle}
-            className="mt-6 flex w-full items-center justify-center gap-2 rounded-xl border border-(--color-border) bg-white px-4 py-2.5 text-sm font-medium text-black transition hover:bg-white/90"
+            onClick={handleGoogleClick}
+            disabled={redirecting}
+            className="mt-6 flex w-full items-center justify-center gap-2 rounded-xl border border-(--color-border) bg-white px-4 py-2.5 text-sm font-medium text-black transition hover:bg-white/90 disabled:cursor-not-allowed disabled:opacity-60"
           >
             <GoogleIcon />
             Continuar con Google
