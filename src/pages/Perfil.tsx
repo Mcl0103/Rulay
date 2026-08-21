@@ -2,12 +2,17 @@ import { useRef, useState } from "react"
 import { Link, useNavigate } from "react-router-dom"
 import { ArrowLeft, Camera, LogOut } from "lucide-react"
 import { Sidebar } from "../components/Sidebar"
+import { StaggerHeader } from "../components/StaggerHeader"
 import { supabase } from "../lib/supabase"
 import { useAuth } from "../lib/auth"
+import { useTheme } from "../lib/theme"
+import { useLanguage } from "../lib/i18n"
 
 export function Perfil() {
   const { user, signOut } = useAuth()
   const navigate = useNavigate()
+  const { theme } = useTheme()
+  const { t } = useLanguage()
 
   const [name, setName] = useState(
     user?.user_metadata?.full_name || user?.user_metadata?.name || "",
@@ -59,20 +64,17 @@ export function Perfil() {
   return (
     <div className="flex h-screen bg-(--color-base)">
       <Sidebar />
-      <main className="flex-1 overflow-y-auto bg-(--color-panel)/40 p-6">
+      <main data-theme={theme} className="flex-1 overflow-y-auto bg-(--color-panel)/40 p-6">
         <Link
           to="/app"
-          className="inline-flex items-center gap-2 text-sm text-(--color-muted) transition hover:text-white"
+          className="inline-flex items-center gap-2 text-sm text-(--color-muted) transition hover:text-(--color-text)"
         >
           <ArrowLeft className="h-4 w-4" />
-          Dashboard
+          {t("sidebar.dashboard")}
         </Link>
 
         <div className="mx-auto mt-6 max-w-xl">
-          <h1 className="text-2xl font-medium text-white">Tu perfil</h1>
-          <p className="mt-1 text-sm text-(--color-muted)">
-            Administra tu información básica de cuenta.
-          </p>
+          <StaggerHeader title={t("perfil.titulo")} subtitle={t("perfil.subtitulo")} />
 
           <div className="mt-8 rounded-2xl border border-(--color-border) bg-(--color-panel) p-6">
             {/* Avatar */}
@@ -108,18 +110,18 @@ export function Perfil() {
                 <button
                   onClick={() => fileInputRef.current?.click()}
                   disabled={uploading}
-                  className="rounded-full border border-(--color-border) px-3 py-1.5 text-xs text-(--color-muted) transition hover:border-(--color-border-hover) hover:text-white"
+                  className="rounded-full border border-(--color-border) px-3 py-1.5 text-xs text-(--color-muted) transition hover:border-(--color-border-hover) hover:text-(--color-text)"
                 >
                   {uploading ? (
-                    <span className="t-shimmer" data-text="Subiendo…">
-                      Subiendo…
+                    <span className="t-shimmer" data-text={t("perfil.subiendo")}>
+                      {t("perfil.subiendo")}
                     </span>
                   ) : (
-                    "Cambiar foto"
+                    t("perfil.cambiarFoto")
                   )}
                 </button>
                 <p className="mt-1.5 text-xs text-(--color-muted-2)">
-                  PNG o JPG, máx 2MB.
+                  {t("perfil.formatoFoto")}
                 </p>
               </div>
             </div>
@@ -127,19 +129,19 @@ export function Perfil() {
             {/* Name */}
             <div className="mt-6">
               <label className="mb-2 block text-sm text-(--color-muted)">
-                Nombre de usuario
+                {t("perfil.nombreUsuario")}
               </label>
               <input
                 value={name}
                 onChange={(e) => setName(e.target.value)}
-                className="w-full rounded-xl border border-(--color-border) bg-(--color-panel-2) px-4 py-2.5 text-[15px] text-white focus:border-(--color-border-hover) focus:outline-none"
+                className="w-full rounded-xl border border-(--color-border) bg-(--color-panel-2) px-4 py-2.5 text-[15px] text-(--color-text) focus:border-(--color-border-hover) focus:outline-none"
               />
             </div>
 
             {/* Email */}
             <div className="mt-4">
               <label className="mb-2 block text-sm text-(--color-muted)">
-                Correo electrónico
+                {t("perfil.correo")}
               </label>
               <input
                 value={user?.email ?? ""}
@@ -151,11 +153,14 @@ export function Perfil() {
             <button
               onClick={handleSave}
               disabled={saving}
-              className="mt-6 rounded-full bg-white px-5 py-2 text-sm font-medium text-black transition hover:bg-white/90 disabled:cursor-not-allowed disabled:opacity-60"
+              className="mt-6 rounded-full bg-(--color-primary) px-5 py-2 text-sm font-medium text-(--color-on-primary) transition hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-60"
             >
               {saving ? (
-                <span className="t-shimmer t-shimmer--on-light" data-text="Guardando…">
-                  Guardando…
+                <span
+                  className={`t-shimmer ${theme === "dark" ? "t-shimmer--on-light" : ""}`}
+                  data-text={t("perfil.guardando")}
+                >
+                  {t("perfil.guardando")}
                 </span>
               ) : saved ? (
                 <span className="inline-flex items-center gap-1.5">
@@ -173,10 +178,10 @@ export function Perfil() {
                       <path d="M4 12l5 5L20 6" style={{ strokeDasharray: 24, strokeDashoffset: 24 }} />
                     </svg>
                   </span>
-                  Guardado
+                  {t("perfil.guardado")}
                 </span>
               ) : (
-                "Guardar cambios"
+                t("perfil.guardarCambios")
               )}
             </button>
           </div>
@@ -188,17 +193,17 @@ export function Perfil() {
                 <LogOut className="h-4 w-4" strokeWidth={1.75} />
               </div>
               <div>
-                <p className="text-sm font-medium text-white">Cerrar sesión</p>
+                <p className="text-sm font-medium text-(--color-text)">{t("perfil.cerrarSesion")}</p>
                 <p className="text-xs text-(--color-muted-2)">
-                  Sales de tu cuenta en este dispositivo.
+                  {t("perfil.cerrarSesionDesc")}
                 </p>
               </div>
             </div>
             <button
               onClick={handleSignOut}
-              className="shrink-0 rounded-full border border-(--color-border) px-4 py-1.5 text-xs font-medium text-(--color-muted) transition hover:border-(--color-border-hover) hover:text-white"
+              className="shrink-0 rounded-full border border-(--color-border) px-4 py-1.5 text-xs font-medium text-(--color-muted) transition hover:border-(--color-border-hover) hover:text-(--color-text)"
             >
-              Salir
+              {t("perfil.salir")}
             </button>
           </div>
         </div>

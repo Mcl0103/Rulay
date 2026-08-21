@@ -13,6 +13,29 @@
   --color-muted-2: #5f5f66;
   --color-accent: #3b82f6;
   --color-accent-2: #60a5fa;
+  /* texto/botón primario — el tema claro los invierte */
+  --color-text: #f2f2f3;
+  --color-primary: #ffffff;
+  --color-on-primary: #0a0a0a;
+}
+
+/* Tema claro — se aplica solo dentro del <main> de cada pantalla vía
+   data-theme="light" (el sidebar nunca lo hereda porque es hermano,
+   no descendiente, del nodo con el atributo). */
+[data-theme="light"] {
+  --color-base: #f5f6f8;
+  --color-panel: #ffffff;
+  --color-panel-2: #eef0f3;
+  --color-border: rgba(10, 10, 20, 0.1);
+  --color-border-hover: rgba(10, 10, 20, 0.18);
+  --color-muted: #52525b;
+  --color-muted-2: #7a7a83;
+  --color-text: #101013;
+  --color-primary: #101013;
+  --color-on-primary: #ffffff;
+  color-scheme: light;
+  background: var(--color-base);
+  color: var(--color-text);
 }
 
 @keyframes nav-glow-pulse {

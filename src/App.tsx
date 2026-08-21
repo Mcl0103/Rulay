@@ -1,5 +1,7 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom"
 import { AuthProvider } from "./lib/auth"
+import { ThemeProvider } from "./lib/theme"
+import { LanguageProvider } from "./lib/i18n"
 import { RequireAuth } from "./components/RequireAuth"
 import { Landing } from "./pages/Landing"
 import { Login } from "./pages/Login"
@@ -16,6 +18,8 @@ function App() {
   return (
     <BrowserRouter>
       <AuthProvider>
+      <ThemeProvider>
+      <LanguageProvider>
         <Routes>
           <Route path="/" element={<Landing />} />
           <Route path="/login" element={<Login />} />
@@ -84,6 +88,8 @@ function App() {
             }
           />
         </Routes>
+      </LanguageProvider>
+      </ThemeProvider>
       </AuthProvider>
     </BrowserRouter>
   )

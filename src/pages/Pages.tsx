@@ -9,6 +9,9 @@ import {
   Sparkles,
 } from "lucide-react"
 import { Sidebar } from "../components/Sidebar"
+import { StaggerHeader } from "../components/StaggerHeader"
+import { useTheme } from "../lib/theme"
+import { useLanguage } from "../lib/i18n"
 
 // Cuenta nueva: sin páginas creadas todavía. Se llenará con datos reales
 // una vez el usuario genere su primera página.
@@ -21,6 +24,8 @@ const pages: {
 }[] = []
 
 export function Pages() {
+  const { theme } = useTheme()
+  const { t } = useLanguage()
   const [query, setQuery] = useState("")
   const filtered = pages.filter((p) =>
     p.name.toLowerCase().includes(query.toLowerCase())
@@ -29,40 +34,40 @@ export function Pages() {
   return (
     <div className="flex h-screen bg-(--color-base)">
       <Sidebar />
-      <main className="flex-1 overflow-y-auto bg-(--color-panel)/40 p-6">
+      <main data-theme={theme} className="flex-1 overflow-y-auto bg-(--color-panel)/40 p-6">
         <div className="flex items-center justify-between">
           <Link
             to="/app"
-            className="inline-flex items-center gap-2 text-sm text-(--color-muted) transition hover:text-white"
+            className="inline-flex items-center gap-2 text-sm text-(--color-muted) transition hover:text-(--color-text)"
           >
             <ArrowLeft className="h-4 w-4" />
-            Dashboard
+            {t("sidebar.dashboard")}
           </Link>
 
           <div className="flex items-center gap-2">
-            <button className="flex items-center gap-1.5 rounded-full border border-(--color-border) px-3.5 py-1.5 text-xs text-(--color-muted) transition hover:border-(--color-border-hover) hover:text-white">
+            <button className="flex items-center gap-1.5 rounded-full border border-(--color-border) px-3.5 py-1.5 text-xs text-(--color-muted) transition hover:border-(--color-border-hover) hover:text-(--color-text)">
               <PlayCircle className="h-3.5 w-3.5" />
-              Ver tutorial
+              {t("pages.verTutorial")}
             </button>
             <Link
               to="/app/generar"
-              className="flex items-center gap-1.5 rounded-full bg-white px-3.5 py-1.5 text-xs font-medium text-black transition hover:bg-white/90"
+              className="flex items-center gap-1.5 rounded-full bg-(--color-primary) px-3.5 py-1.5 text-xs font-medium text-(--color-on-primary) transition hover:opacity-90"
             >
               <Sparkles className="h-3.5 w-3.5" />
-              Crear página con IA
+              {t("pages.crearConIA")}
             </Link>
           </div>
         </div>
 
-        <h1 className="mt-6 text-2xl font-medium text-white">Páginas</h1>
+        <StaggerHeader title={t("pages.titulo")} className="mt-6" />
 
         <div className="mt-5 flex items-center gap-2.5 rounded-xl border border-(--color-border) bg-(--color-panel) px-4 py-2.5 focus-within:border-(--color-border-hover)">
           <Search className="h-4 w-4 text-(--color-muted-2)" />
           <input
             value={query}
             onChange={(e) => setQuery(e.target.value)}
-            placeholder="Buscar páginas por nombre…"
-            className="w-full bg-transparent text-sm text-white placeholder:text-(--color-muted-2) focus:outline-none"
+            placeholder={t("pages.buscar")}
+            className="w-full bg-transparent text-sm text-(--color-text) placeholder:text-(--color-muted-2) focus:outline-none"
           />
         </div>
 
@@ -71,22 +76,18 @@ export function Pages() {
             <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-(--color-panel-2) text-(--color-muted)">
               <FileText className="h-5 w-5" />
             </div>
-            <p className="mt-4 text-sm font-medium text-white">
-              {query
-                ? "No se encontraron páginas"
-                : "Aún no has creado páginas"}
+            <p className="mt-4 text-sm font-medium text-(--color-text)">
+              {query ? t("pages.noEncontradas") : t("recent.vacioTitulo")}
             </p>
             <p className="mt-1 max-w-xs text-xs text-(--color-muted-2)">
-              {query
-                ? "Prueba con otro nombre o crea una página nueva."
-                : "Empieza ahora y descubre lo fácil que es generar tu primera página con IA."}
+              {query ? t("pages.pruebaOtroNombre") : t("pages.empiezaAhora")}
             </p>
             <Link
               to="/app/generar"
-              className="mt-5 flex items-center gap-1.5 rounded-full bg-white px-4 py-1.5 text-xs font-medium text-black transition hover:bg-white/90"
+              className="mt-5 flex items-center gap-1.5 rounded-full bg-(--color-primary) px-4 py-1.5 text-xs font-medium text-(--color-on-primary) transition hover:opacity-90"
             >
               <Sparkles className="h-3.5 w-3.5" />
-              Crear primera página con IA
+              {t("pages.crearPrimera")}
             </Link>
           </div>
         ) : (
@@ -107,7 +108,7 @@ export function Pages() {
                   </a>
                 </div>
                 <div className="p-4">
-                  <p className="text-sm font-medium text-white">{page.name}</p>
+                  <p className="text-sm font-medium text-(--color-text)">{page.name}</p>
                   <div className="mt-1 flex items-center justify-between">
                     <p className="text-xs text-(--color-muted-2)">
                       {page.source} · {page.credits} créditos
@@ -116,7 +117,7 @@ export function Pages() {
                       className={`rounded-full px-2 py-0.5 text-[11px] ${
                         page.status === "Publicada"
                           ? "bg-emerald-500/10 text-emerald-400"
-                          : "bg-white/5 text-(--color-muted)"
+                          : "bg-(--color-panel-2) text-(--color-muted)"
                       }`}
                     >
                       {page.status}

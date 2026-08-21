@@ -2,15 +2,20 @@ import { useEffect, useState } from "react"
 import { ArrowLeft, MessageCircle, Sheet, Zap, Check } from "lucide-react"
 import { Link } from "react-router-dom"
 import { Sidebar } from "../components/Sidebar"
-import shopifyLogo from "../assets/shopify-logo-white-bg.png"
+import { StaggerHeader } from "../components/StaggerHeader"
+import shopifyLogo from "../assets/shopify-logo-white-bg.webp"
+import { useTheme } from "../lib/theme"
+import { useLanguage, type TranslationKey } from "../lib/i18n"
 
-const proximamente = [
-  { icon: MessageCircle, name: "WhatsApp Business", desc: "Envía tus páginas generadas por chat automáticamente." },
-  { icon: Sheet, name: "Google Sheets", desc: "Sincroniza tus productos y páginas con una hoja de cálculo." },
-  { icon: Zap, name: "Zapier", desc: "Conecta Rulay con miles de apps sin código." },
+const proximamente: { icon: typeof MessageCircle; name: string; descKey: TranslationKey }[] = [
+  { icon: MessageCircle, name: "WhatsApp Business", descKey: "integraciones.proximamente.whatsapp" },
+  { icon: Sheet, name: "Google Sheets", descKey: "integraciones.proximamente.sheets" },
+  { icon: Zap, name: "Zapier", descKey: "integraciones.proximamente.zapier" },
 ]
 
 export function Integraciones() {
+  const { theme } = useTheme()
+  const { t } = useLanguage()
   const [domain, setDomain] = useState<string | null>(null)
   const [connecting, setConnecting] = useState(false)
   const [loaded, setLoaded] = useState(false)
@@ -41,20 +46,20 @@ export function Integraciones() {
   return (
     <div className="flex h-screen bg-(--color-base)">
       <Sidebar />
-      <main className="flex-1 overflow-y-auto bg-(--color-panel)/40 p-6">
+      <main data-theme={theme} className="flex-1 overflow-y-auto bg-(--color-panel)/40 p-6">
         <Link
           to="/app"
-          className="inline-flex items-center gap-2 text-sm text-(--color-muted) transition hover:text-white"
+          className="inline-flex items-center gap-2 text-sm text-(--color-muted) transition hover:text-(--color-text)"
         >
           <ArrowLeft className="h-4 w-4" />
-          Dashboard
+          {t("sidebar.dashboard")}
         </Link>
 
         <div className="mx-auto mt-6 max-w-3xl">
-          <h1 className="text-2xl font-medium text-white">Integraciones</h1>
-          <p className="mt-1 text-sm text-(--color-muted)">
-            Conecta tus herramientas para publicar y automatizar directo desde Rulay.
-          </p>
+          <StaggerHeader
+            title={t("integraciones.titulo")}
+            subtitle={t("integraciones.subtitulo")}
+          />
 
           {/* Shopify — integración principal */}
           <div className="relative mt-8 overflow-hidden rounded-2xl border border-white/10 bg-black p-6">
@@ -74,7 +79,7 @@ export function Integraciones() {
                     {domain && (
                       <span className="flex items-center gap-1 rounded-full bg-emerald-500/10 px-2 py-0.5 text-[11px] text-emerald-400">
                         <Check className="h-3 w-3" />
-                        Conectada
+                        {t("integraciones.conectada")}
                       </span>
                     )}
                   </div>
@@ -90,7 +95,7 @@ export function Integraciones() {
                   onClick={handleDisconnect}
                   className="shrink-0 rounded-full border border-white/15 px-4 py-1.5 text-xs font-medium text-(--color-muted) transition hover:border-white/30 hover:text-white"
                 >
-                  Desconectar
+                  {t("integraciones.desconectar")}
                 </button>
               ) : (
                 <button
@@ -99,11 +104,11 @@ export function Integraciones() {
                   className="shrink-0 rounded-full bg-white px-4 py-1.5 text-xs font-medium text-black transition hover:bg-white/90 disabled:cursor-not-allowed disabled:opacity-60"
                 >
                   {connecting ? (
-                    <span className="t-shimmer t-shimmer--on-light" data-text="Conectando…">
-                      Conectando…
+                    <span className="t-shimmer t-shimmer--on-light" data-text={t("integraciones.conectando")}>
+                      {t("integraciones.conectando")}
                     </span>
                   ) : (
-                    "Conectar Shopify"
+                    t("integraciones.conectar")
                   )}
                 </button>
               )}
@@ -116,15 +121,15 @@ export function Integraciones() {
               </div>
             )}
             <p className="relative mt-3 text-xs text-(--color-muted-2)">
-              Por ahora puedes conectar una tienda a la vez — si cambias de tienda, desconecta esta y conecta la nueva.
+              {t("integraciones.unaTiendaNota")}
             </p>
           </div>
 
           {/* Próximamente */}
           <div className="mt-10">
-            <p className="mb-3 text-sm font-medium text-white">Próximamente</p>
+            <p className="mb-3 text-sm font-medium text-(--color-text)">{t("integraciones.proximamente")}</p>
             <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
-              {proximamente.map(({ icon: Icon, name, desc }) => (
+              {proximamente.map(({ icon: Icon, name, descKey }) => (
                 <div
                   key={name}
                   className="relative overflow-hidden rounded-2xl border border-dashed border-(--color-border) bg-(--color-panel) p-4"
@@ -133,12 +138,12 @@ export function Integraciones() {
                     <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-(--color-panel-2) text-(--color-muted)">
                       <Icon className="h-4 w-4" strokeWidth={1.75} />
                     </div>
-                    <p className="mt-3 text-sm font-medium text-white">{name}</p>
-                    <p className="mt-1 text-xs text-(--color-muted-2)">{desc}</p>
+                    <p className="mt-3 text-sm font-medium text-(--color-text)">{name}</p>
+                    <p className="mt-1 text-xs text-(--color-muted-2)">{t(descKey)}</p>
                   </div>
                   <div className="absolute inset-0 flex items-center justify-center bg-black/20">
                     <span className="rounded-full border border-(--color-border) bg-(--color-panel) px-3 py-1 text-[11px] text-(--color-muted)">
-                      Próximamente
+                      {t("integraciones.proximamente")}
                     </span>
                   </div>
                 </div>

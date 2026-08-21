@@ -13,9 +13,14 @@ import {
   Trash2,
   Upload,
   X,
+  Moon,
+  Sun,
 } from "lucide-react"
 import { Sidebar } from "../components/Sidebar"
+import { StaggerHeader } from "../components/StaggerHeader"
 import { useAuth } from "../lib/auth"
+import { useTheme } from "../lib/theme"
+import { useLanguage, type Lang } from "../lib/i18n"
 
 const countryCurrency: Record<string, string> = {
   Colombia: "COP",
@@ -38,14 +43,13 @@ const countryLanguage: Record<string, string> = {
   España: "Español",
 }
 const countries = Object.keys(countryCurrency)
-const uiLanguages = ["Español", "English"]
 const packages = ["Starter", "Growth", "Pro"]
-
-const DEFAULT_WELCOME = "¿Qué producto vamos a lanzar?"
 
 export function Configuracion() {
   const navigate = useNavigate()
   const { signOut } = useAuth()
+  const { theme, setTheme } = useTheme()
+  const { lang, setLang, t } = useLanguage()
 
   const [pais, setPais] = useState("")
   const [idioma, setIdioma] = useState("")
@@ -63,8 +67,6 @@ export function Configuracion() {
   const [watermarkImg, setWatermarkImg] = useState<string | null>(null)
   const watermarkInputRef = useRef<HTMLInputElement>(null)
 
-  const [uiLanguage, setUiLanguage] = useState("Español")
-
   const [saved, setSaved] = useState(false)
 
   useEffect(() => {
@@ -78,7 +80,6 @@ export function Configuracion() {
     setAutoRecargaPaquete(localStorage.getItem("rulay_auto_recarga_paquete") ?? "Starter")
     setWatermarkOn(localStorage.getItem("rulay_watermark_on") === "true")
     setWatermarkImg(localStorage.getItem("rulay_watermark_img"))
-    setUiLanguage(localStorage.getItem("rulay_ui_language") ?? "Español")
   }, [])
 
   function handlePaisChange(value: string) {
@@ -104,7 +105,6 @@ export function Configuracion() {
     localStorage.setItem("rulay_auto_recarga_paquete", autoRecargaPaquete)
     localStorage.setItem("rulay_watermark_on", String(watermarkOn))
     if (watermarkImg) localStorage.setItem("rulay_watermark_img", watermarkImg)
-    localStorage.setItem("rulay_ui_language", uiLanguage)
     setSaved(true)
     setTimeout(() => setSaved(false), 1800)
   }
@@ -139,36 +139,64 @@ export function Configuracion() {
   return (
     <div className="flex h-screen bg-(--color-base)">
       <Sidebar />
-      <main className="flex-1 overflow-y-auto bg-(--color-panel)/40 p-6">
+      <main data-theme={theme} className="flex-1 overflow-y-auto bg-(--color-panel)/40 p-6">
         <Link
           to="/app"
-          className="inline-flex items-center gap-2 text-sm text-(--color-muted) transition hover:text-white"
+          className="inline-flex items-center gap-2 text-sm text-(--color-muted) transition hover:text-(--color-text)"
         >
           <ArrowLeft className="h-4 w-4" />
-          Dashboard
+          {t("sidebar.dashboard")}
         </Link>
 
         <div className="mx-auto mt-6 max-w-2xl pb-10">
-          <h1 className="text-2xl font-medium text-white">Configuración</h1>
-          <p className="mt-1 text-sm text-(--color-muted)">
-            Preferencias generales de tu cuenta.
-          </p>
+          <StaggerHeader title={t("config.titulo")} subtitle={t("config.subtitulo")} />
+
+          {/* Apariencia */}
+          <div className="mt-8 rounded-2xl border border-(--color-border) bg-(--color-panel) p-6">
+            <div className="flex items-center gap-2 text-sm font-medium text-(--color-text)">
+              <Moon className="h-4 w-4 text-(--color-accent-2)" />
+              {t("config.apariencia")}
+            </div>
+            <p className="mt-1 text-xs text-(--color-muted-2)">{t("config.apparienciaDesc")}</p>
+            <div className="mt-3 flex gap-2">
+              <button
+                onClick={() => setTheme("dark")}
+                className={`flex items-center gap-1.5 rounded-full border px-3 py-1.5 text-xs transition ${
+                  theme === "dark"
+                    ? "border-(--color-accent) bg-(--color-accent)/15 text-(--color-text)"
+                    : "border-(--color-border) text-(--color-muted) hover:border-(--color-border-hover) hover:text-(--color-text)"
+                }`}
+              >
+                <Moon className="h-3.5 w-3.5" />
+                {t("config.oscuro")}
+              </button>
+              <button
+                onClick={() => setTheme("light")}
+                className={`flex items-center gap-1.5 rounded-full border px-3 py-1.5 text-xs transition ${
+                  theme === "light"
+                    ? "border-(--color-accent) bg-(--color-accent)/15 text-(--color-text)"
+                    : "border-(--color-border) text-(--color-muted) hover:border-(--color-border-hover) hover:text-(--color-text)"
+                }`}
+              >
+                <Sun className="h-3.5 w-3.5" />
+                {t("config.claro")}
+              </button>
+            </div>
+          </div>
 
           {/* País / moneda / idioma de contenido */}
-          <div className="mt-8 rounded-2xl border border-(--color-border) bg-(--color-panel) p-6">
-            <div className="flex items-center gap-2 text-sm font-medium text-white">
+          <div className="mt-4 rounded-2xl border border-(--color-border) bg-(--color-panel) p-6">
+            <div className="flex items-center gap-2 text-sm font-medium text-(--color-text)">
               <Globe className="h-4 w-4 text-(--color-accent-2)" />
-              País donde operas
+              {t("config.pais")}
             </div>
-            <p className="mt-1 text-xs text-(--color-muted-2)">
-              Precarga el idioma y la moneda por defecto en tus páginas y landings.
-            </p>
+            <p className="mt-1 text-xs text-(--color-muted-2)">{t("config.paisDesc")}</p>
             <select
               value={pais}
               onChange={(e) => handlePaisChange(e.target.value)}
-              className="mt-3 w-full rounded-xl border border-(--color-border) bg-(--color-panel-2) px-4 py-2.5 text-[15px] text-white focus:border-(--color-border-hover) focus:outline-none"
+              className="mt-3 w-full rounded-xl border border-(--color-border) bg-(--color-panel-2) px-4 py-2.5 text-[15px] text-(--color-text) focus:border-(--color-border-hover) focus:outline-none"
             >
-              <option value="">Selecciona un país…</option>
+              <option value="">{t("config.selecciona")}</option>
               {countries.map((c) => (
                 <option key={c} value={c}>
                   {c}
@@ -179,10 +207,10 @@ export function Configuracion() {
             {pais && (
               <div className="mt-3 flex gap-2">
                 <span className="rounded-full border border-(--color-border) bg-(--color-panel-2) px-3 py-1 text-xs text-(--color-muted)">
-                  Moneda: <span className="text-(--color-accent-2)">{divisa}</span>
+                  {t("config.moneda")}: <span className="text-(--color-accent-2)">{divisa}</span>
                 </span>
                 <span className="rounded-full border border-(--color-border) bg-(--color-panel-2) px-3 py-1 text-xs text-(--color-muted)">
-                  Idioma de contenido: <span className="text-(--color-accent-2)">{idioma}</span>
+                  {t("config.idiomaContenido")}: <span className="text-(--color-accent-2)">{idioma}</span>
                 </span>
               </div>
             )}
@@ -190,32 +218,30 @@ export function Configuracion() {
 
           {/* Mensaje de bienvenida */}
           <div className="mt-4 rounded-2xl border border-(--color-border) bg-(--color-panel) p-6">
-            <div className="flex items-center gap-2 text-sm font-medium text-white">
+            <div className="flex items-center gap-2 text-sm font-medium text-(--color-text)">
               <MessageSquare className="h-4 w-4 text-(--color-accent-2)" />
-              Mensaje de bienvenida
+              {t("config.mensajeBienvenida")}
             </div>
-            <p className="mt-1 text-xs text-(--color-muted-2)">
-              Reemplaza "¿Qué producto vamos a lanzar?" en tu Dashboard.
-            </p>
+            <p className="mt-1 text-xs text-(--color-muted-2)">{t("config.mensajeBienvenidaDesc")}</p>
             <input
               value={welcomeMessage}
               onChange={(e) => setWelcomeMessage(e.target.value)}
-              placeholder={DEFAULT_WELCOME}
-              className="mt-3 w-full rounded-xl border border-(--color-border) bg-(--color-panel-2) px-4 py-2.5 text-[15px] text-white placeholder:text-(--color-muted-2) focus:border-(--color-border-hover) focus:outline-none"
+              placeholder={t("dashboard.bienvenidaDefault")}
+              className="mt-3 w-full rounded-xl border border-(--color-border) bg-(--color-panel-2) px-4 py-2.5 text-[15px] text-(--color-text) placeholder:text-(--color-muted-2) focus:border-(--color-border-hover) focus:outline-none"
             />
           </div>
 
           {/* Créditos: alerta de saldo bajo + auto-recarga */}
           <div className="mt-4 rounded-2xl border border-(--color-border) bg-(--color-panel) p-6">
-            <div className="flex items-center gap-2 text-sm font-medium text-white">
+            <div className="flex items-center gap-2 text-sm font-medium text-(--color-text)">
               <Coins className="h-4 w-4 text-(--color-accent-2)" />
-              Créditos
+              {t("config.creditos")}
             </div>
 
             <div className="mt-4 flex items-center justify-between gap-3">
               <div>
-                <p className="text-sm text-white">Avisarme cuando queden pocos créditos</p>
-                <p className="text-xs text-(--color-muted-2)">Te llega un correo cuando bajas del umbral.</p>
+                <p className="text-sm text-(--color-text)">{t("config.avisarSaldoBajo")}</p>
+                <p className="text-xs text-(--color-muted-2)">{t("config.avisarSaldoBajoDesc")}</p>
               </div>
               <button
                 type="button"
@@ -224,7 +250,7 @@ export function Configuracion() {
                 aria-checked={lowCreditsAlert}
                 data-on={lowCreditsAlert}
                 className={`t-toggle is-init relative inline-flex h-5 w-9 shrink-0 items-center rounded-full transition-colors ${
-                  lowCreditsAlert ? "bg-(--color-accent)" : "bg-white/15"
+                  lowCreditsAlert ? "bg-(--color-accent)" : "bg-(--color-muted-2)/35"
                 }`}
               >
                 <span className="t-toggle-thumb ml-0.5 block h-4 w-4 rounded-full bg-white" />
@@ -232,15 +258,15 @@ export function Configuracion() {
             </div>
             {lowCreditsAlert && (
               <div className="mt-2 flex items-center gap-2">
-                <span className="text-xs text-(--color-muted)">Avisarme con menos de</span>
+                <span className="text-xs text-(--color-muted)">{t("config.avisarMenosDe")}</span>
                 <input
                   type="number"
                   min={1}
                   value={lowCreditsThreshold}
                   onChange={(e) => setLowCreditsThreshold(e.target.value)}
-                  className="w-20 rounded-lg border border-(--color-border) bg-(--color-panel-2) px-2 py-1 text-sm text-white focus:outline-none"
+                  className="w-20 rounded-lg border border-(--color-border) bg-(--color-panel-2) px-2 py-1 text-sm text-(--color-text) focus:outline-none"
                 />
-                <span className="text-xs text-(--color-muted)">créditos</span>
+                <span className="text-xs text-(--color-muted)">{t("config.creditosPalabra")}</span>
               </div>
             )}
 
@@ -248,10 +274,8 @@ export function Configuracion() {
               <div className="flex items-center gap-2">
                 <RefreshCw className="h-3.5 w-3.5 text-(--color-muted-2)" />
                 <div>
-                  <p className="text-sm text-white">Auto-recarga de créditos</p>
-                  <p className="text-xs text-(--color-muted-2)">
-                    Se compra el paquete elegido apenas bajes del umbral.
-                  </p>
+                  <p className="text-sm text-(--color-text)">{t("config.autoRecarga")}</p>
+                  <p className="text-xs text-(--color-muted-2)">{t("config.autoRecargaDesc")}</p>
                 </div>
               </div>
               <button
@@ -261,7 +285,7 @@ export function Configuracion() {
                 aria-checked={autoRecarga}
                 data-on={autoRecarga}
                 className={`t-toggle is-init relative inline-flex h-5 w-9 shrink-0 items-center rounded-full transition-colors ${
-                  autoRecarga ? "bg-(--color-accent)" : "bg-white/15"
+                  autoRecarga ? "bg-(--color-accent)" : "bg-(--color-muted-2)/35"
                 }`}
               >
                 <span className="t-toggle-thumb ml-0.5 block h-4 w-4 rounded-full bg-white" />
@@ -269,19 +293,19 @@ export function Configuracion() {
             </div>
             {autoRecarga && (
               <div className="mt-2 flex flex-wrap items-center gap-2">
-                <span className="text-xs text-(--color-muted)">Recargar con menos de</span>
+                <span className="text-xs text-(--color-muted)">{t("config.recargarCon")}</span>
                 <input
                   type="number"
                   min={1}
                   value={autoRecargaThreshold}
                   onChange={(e) => setAutoRecargaThreshold(e.target.value)}
-                  className="w-20 rounded-lg border border-(--color-border) bg-(--color-panel-2) px-2 py-1 text-sm text-white focus:outline-none"
+                  className="w-20 rounded-lg border border-(--color-border) bg-(--color-panel-2) px-2 py-1 text-sm text-(--color-text) focus:outline-none"
                 />
-                <span className="text-xs text-(--color-muted)">créditos, comprando</span>
+                <span className="text-xs text-(--color-muted)">{t("config.comprando")}</span>
                 <select
                   value={autoRecargaPaquete}
                   onChange={(e) => setAutoRecargaPaquete(e.target.value)}
-                  className="rounded-lg border border-(--color-border) bg-(--color-panel-2) px-2 py-1 text-sm text-white focus:outline-none"
+                  className="rounded-lg border border-(--color-border) bg-(--color-panel-2) px-2 py-1 text-sm text-(--color-text) focus:outline-none"
                 >
                   {packages.map((p) => (
                     <option key={p} value={p}>
@@ -296,9 +320,9 @@ export function Configuracion() {
           {/* Marca de agua propia */}
           <div className="mt-4 rounded-2xl border border-(--color-border) bg-(--color-panel) p-6">
             <div className="flex items-center justify-between gap-3">
-              <div className="flex items-center gap-2 text-sm font-medium text-white">
+              <div className="flex items-center gap-2 text-sm font-medium text-(--color-text)">
                 <ShieldCheck className="h-4 w-4 text-(--color-accent-2)" />
-                Marca de agua en mis imágenes
+                {t("config.marcaAgua")}
               </div>
               <button
                 type="button"
@@ -307,15 +331,13 @@ export function Configuracion() {
                 aria-checked={watermarkOn}
                 data-on={watermarkOn}
                 className={`t-toggle is-init relative inline-flex h-5 w-9 shrink-0 items-center rounded-full transition-colors ${
-                  watermarkOn ? "bg-(--color-accent)" : "bg-white/15"
+                  watermarkOn ? "bg-(--color-accent)" : "bg-(--color-muted-2)/35"
                 }`}
               >
                 <span className="t-toggle-thumb ml-0.5 block h-4 w-4 rounded-full bg-white" />
               </button>
             </div>
-            <p className="mt-1 text-xs text-(--color-muted-2)">
-              Sube tu propia marca (no la de Rulay) — se superpone sobre cada imagen generada antes de enviarla a Shopify, para que no te roben las fotos. Es un procesamiento de imagen aparte, no lo hace la IA.
-            </p>
+            <p className="mt-1 text-xs text-(--color-muted-2)">{t("config.marcaAguaDesc")}</p>
 
             {watermarkOn && (
               <div className="mt-3">
@@ -330,16 +352,16 @@ export function Configuracion() {
                   <div className="flex items-center gap-3 rounded-xl border border-(--color-border) bg-(--color-panel-2) p-3">
                     <img
                       src={watermarkImg}
-                      alt="Marca de agua"
+                      alt={t("config.marcaCargada")}
                       className="h-12 w-12 rounded-lg bg-black/40 object-contain"
                     />
                     <div className="flex-1">
-                      <p className="text-sm text-white">Marca cargada</p>
-                      <p className="text-xs text-(--color-muted-2)">Se aplica a todas tus imágenes.</p>
+                      <p className="text-sm text-(--color-text)">{t("config.marcaCargada")}</p>
+                      <p className="text-xs text-(--color-muted-2)">{t("config.marcaCargadaDesc")}</p>
                     </div>
                     <button
                       onClick={() => setWatermarkImg(null)}
-                      className="flex h-7 w-7 items-center justify-center rounded-full text-(--color-muted) transition hover:bg-white/10 hover:text-white"
+                      className="flex h-7 w-7 items-center justify-center rounded-full text-(--color-muted) transition hover:bg-black/10 hover:text-(--color-text)"
                     >
                       <X className="h-3.5 w-3.5" />
                     </button>
@@ -347,36 +369,30 @@ export function Configuracion() {
                 ) : (
                   <button
                     onClick={() => watermarkInputRef.current?.click()}
-                    className="flex w-full items-center gap-2 rounded-xl border border-dashed border-(--color-border) bg-(--color-panel-2) px-4 py-3 text-sm text-(--color-muted) transition hover:border-(--color-border-hover) hover:text-white"
+                    className="flex w-full items-center gap-2 rounded-xl border border-dashed border-(--color-border) bg-(--color-panel-2) px-4 py-3 text-sm text-(--color-muted) transition hover:border-(--color-border-hover) hover:text-(--color-text)"
                   >
                     <Upload className="h-4 w-4 shrink-0" />
-                    Subir mi marca de agua
+                    {t("config.subirMarca")}
                   </button>
                 )}
               </div>
             )}
           </div>
 
-
           {/* Idioma de la interfaz */}
           <div className="mt-4 rounded-2xl border border-(--color-border) bg-(--color-panel) p-6">
-            <div className="flex items-center gap-2 text-sm font-medium text-white">
+            <div className="flex items-center gap-2 text-sm font-medium text-(--color-text)">
               <Languages className="h-4 w-4 text-(--color-accent-2)" />
-              Idioma de la interfaz
+              {t("config.idiomaInterfaz")}
             </div>
-            <p className="mt-1 text-xs text-(--color-muted-2)">
-              En qué idioma ves tú los botones y menús de Rulay — distinto del idioma en el que se generan tus páginas.
-            </p>
+            <p className="mt-1 text-xs text-(--color-muted-2)">{t("config.idiomaInterfazDesc")}</p>
             <select
-              value={uiLanguage}
-              onChange={(e) => setUiLanguage(e.target.value)}
-              className="mt-3 w-full rounded-xl border border-(--color-border) bg-(--color-panel-2) px-4 py-2.5 text-[15px] text-white focus:border-(--color-border-hover) focus:outline-none"
+              value={lang}
+              onChange={(e) => setLang(e.target.value as Lang)}
+              className="mt-3 w-full rounded-xl border border-(--color-border) bg-(--color-panel-2) px-4 py-2.5 text-[15px] text-(--color-text) focus:border-(--color-border-hover) focus:outline-none"
             >
-              {uiLanguages.map((l) => (
-                <option key={l} value={l}>
-                  {l}
-                </option>
-              ))}
+              <option value="es">Español</option>
+              <option value="en">English</option>
             </select>
           </div>
 
@@ -387,44 +403,42 @@ export function Configuracion() {
                 <User className="h-4 w-4" strokeWidth={1.75} />
               </div>
               <div>
-                <p className="text-sm font-medium text-white">Nombre y avatar</p>
-                <p className="text-xs text-(--color-muted-2)">
-                  Se editan desde tu perfil, no acá.
-                </p>
+                <p className="text-sm font-medium text-(--color-text)">{t("config.nombreAvatar")}</p>
+                <p className="text-xs text-(--color-muted-2)">{t("config.nombreAvatarDesc")}</p>
               </div>
             </div>
             <Link
               to="/app/perfil"
-              className="shrink-0 rounded-full border border-(--color-border) px-4 py-1.5 text-xs font-medium text-(--color-muted) transition hover:border-(--color-border-hover) hover:text-white"
+              className="shrink-0 rounded-full border border-(--color-border) px-4 py-1.5 text-xs font-medium text-(--color-muted) transition hover:border-(--color-border-hover) hover:text-(--color-text)"
             >
-              Ir a Perfil
+              {t("config.irAPerfil")}
             </Link>
           </div>
 
           <button
             onClick={handleSave}
-            className="mt-6 rounded-full bg-white px-5 py-2 text-sm font-medium text-black transition hover:bg-white/90"
+            className="mt-6 rounded-full bg-(--color-primary) px-5 py-2 text-sm font-medium text-(--color-on-primary) transition hover:opacity-90"
           >
-            {saved ? "Guardado ✓" : "Guardar cambios"}
+            {saved ? `${t("config.guardado")} ✓` : t("config.guardarCambios")}
           </button>
 
           {/* Privacidad */}
           <div className="mt-10 border-t border-(--color-border) pt-6">
-            <p className="text-sm font-medium text-white">Privacidad</p>
+            <p className="text-sm font-medium text-(--color-text)">{t("config.privacidad")}</p>
             <div className="mt-3 flex flex-wrap gap-2">
               <button
                 onClick={handleExportData}
-                className="flex items-center gap-1.5 rounded-full border border-(--color-border) px-4 py-1.5 text-xs text-(--color-muted) transition hover:border-(--color-border-hover) hover:text-white"
+                className="flex items-center gap-1.5 rounded-full border border-(--color-border) px-4 py-1.5 text-xs text-(--color-muted) transition hover:border-(--color-border-hover) hover:text-(--color-text)"
               >
                 <Download className="h-3.5 w-3.5" />
-                Exportar mis datos
+                {t("config.exportarDatos")}
               </button>
               <button
                 onClick={handleDeleteData}
                 className="flex items-center gap-1.5 rounded-full border border-red-500/20 px-4 py-1.5 text-xs text-red-400 transition hover:border-red-500/40 hover:bg-red-500/10"
               >
                 <Trash2 className="h-3.5 w-3.5" />
-                Borrar mis datos y cerrar cuenta
+                {t("config.borrarDatos")}
               </button>
             </div>
           </div>

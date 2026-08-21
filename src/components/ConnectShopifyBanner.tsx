@@ -1,9 +1,11 @@
 import { useState } from "react"
 import { Link } from "react-router-dom"
 import { X } from "lucide-react"
-import shopifyLogo from "../assets/shopify-logo-white-bg.png"
+import shopifyLogo from "../assets/shopify-logo-white-bg.webp"
+import { useLanguage } from "../lib/i18n"
 
 export function ConnectShopifyBanner() {
+  const { t } = useLanguage()
   const [connected, setConnected] = useState(false)
   const [connecting, setConnecting] = useState(false)
   const [dismissed, setDismissed] = useState(false)
@@ -31,10 +33,10 @@ export function ConnectShopifyBanner() {
         </div>
         <div>
           <p className="text-sm font-medium text-white">
-            Conecta tu tienda Shopify
+            {t("shopifyBanner.titulo")}
           </p>
           <p className="text-xs text-(--color-muted)">
-            Publica tus páginas generadas directo a tu tienda en un clic.
+            {t("shopifyBanner.desc")}
           </p>
         </div>
       </div>
@@ -46,11 +48,11 @@ export function ConnectShopifyBanner() {
             className="flex items-center gap-1.5 rounded-full bg-white px-4 py-1.5 text-xs font-medium text-black transition hover:bg-white/90 disabled:cursor-not-allowed disabled:opacity-60"
           >
             {connecting ? (
-              <span className="t-shimmer t-shimmer--on-light" data-text="Conectando…">
-                Conectando…
+              <span className="t-shimmer t-shimmer--on-light" data-text={t("integraciones.conectando")}>
+                {t("integraciones.conectando")}
               </span>
             ) : (
-              "Conectar Shopify"
+              t("integraciones.conectar")
             )}
           </button>
         )}
@@ -58,7 +60,7 @@ export function ConnectShopifyBanner() {
           to="/app/integraciones"
           className="hidden text-xs text-(--color-muted) transition hover:text-white sm:block"
         >
-          Ver integraciones
+          {t("shopifyBanner.verIntegraciones")}
         </Link>
         <button
           onClick={() => setDismissed(true)}

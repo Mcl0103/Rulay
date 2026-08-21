@@ -1,4 +1,4 @@
-import logoMark from "../assets/rulay-logo-mark.png"
+import logoMark from "../assets/rulay-logo-mark.webp"
 
 export function Logo({ className = "" }: { className?: string }) {
   return (

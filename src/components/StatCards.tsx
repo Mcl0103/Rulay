@@ -1,17 +1,19 @@
 import { FileText, Coins, TrendingUp } from "lucide-react"
+import { useLanguage, type TranslationKey } from "../lib/i18n"
 
 const stats = [
-  { icon: FileText, label: "Páginas generadas", value: "0" },
-  { icon: Coins, label: "Créditos usados", value: "0" },
-  { icon: TrendingUp, label: "Conversión promedio", value: "—" },
+  { icon: FileText, labelKey: "stats.paginasGeneradas" as TranslationKey, value: "0" },
+  { icon: Coins, labelKey: "stats.creditosUsados" as TranslationKey, value: "0" },
+  { icon: TrendingUp, labelKey: "stats.conversionPromedio" as TranslationKey, value: "—" },
 ]
 
 export function StatCards() {
+  const { t } = useLanguage()
   return (
     <div className="relative mt-8 grid grid-cols-1 rounded-2xl border border-dashed border-(--color-border) bg-(--color-panel) sm:grid-cols-3">
-      {stats.map(({ icon: Icon, label, value }, i) => (
+      {stats.map(({ icon: Icon, labelKey, value }, i) => (
         <div
-          key={label}
+          key={labelKey}
           className={`p-5 ${
             i !== 0
               ? "border-t border-dashed border-(--color-border) sm:border-t-0 sm:border-l"
@@ -21,8 +23,8 @@ export function StatCards() {
           <div className="mb-6 flex h-8 w-8 items-center justify-center rounded-lg bg-(--color-panel-2) text-(--color-muted)">
             <Icon className="h-4 w-4" strokeWidth={1.75} />
           </div>
-          <p className="text-2xl font-medium text-white">{value}</p>
-          <p className="text-sm text-(--color-muted-2)">{label}</p>
+          <p className="text-2xl font-medium text-(--color-text)">{value}</p>
+          <p className="text-sm text-(--color-muted-2)">{t(labelKey)}</p>
         </div>
       ))}
 

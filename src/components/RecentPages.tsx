@@ -1,5 +1,6 @@
 import { ExternalLink, FileText, Sparkles } from "lucide-react"
 import { Link } from "react-router-dom"
+import { useLanguage } from "../lib/i18n"
 
 // Cuenta nueva: sin páginas creadas todavía.
 const pages: {
@@ -11,15 +12,16 @@ const pages: {
 }[] = []
 
 export function RecentPages() {
+  const { t } = useLanguage()
   return (
     <div className="mt-10">
       <div className="mb-3 flex items-center justify-between">
-        <h2 className="text-sm font-medium text-white">Páginas recientes</h2>
+        <h2 className="text-sm font-medium text-(--color-text)">{t("recent.titulo")}</h2>
         <Link
           to="/app/paginas"
-          className="text-xs text-(--color-muted) hover:text-white"
+          className="text-xs text-(--color-muted) hover:text-(--color-text)"
         >
-          Ver todas
+          {t("recent.verTodas")}
         </Link>
       </div>
 
@@ -28,18 +30,18 @@ export function RecentPages() {
           <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-(--color-panel-2) text-(--color-muted)">
             <FileText className="h-5 w-5" />
           </div>
-          <p className="mt-3 text-sm font-medium text-white">
-            Aún no has creado páginas
+          <p className="mt-3 text-sm font-medium text-(--color-text)">
+            {t("recent.vacioTitulo")}
           </p>
           <p className="mt-1 max-w-xs text-xs text-(--color-muted-2)">
-            Crea tu primera página con IA y aparecerá aquí.
+            {t("recent.vacioDesc")}
           </p>
           <Link
             to="/app/generar"
-            className="mt-4 flex items-center gap-1.5 rounded-full bg-white px-4 py-1.5 text-xs font-medium text-black transition hover:bg-white/90"
+            className="mt-4 flex items-center gap-1.5 rounded-full bg-(--color-primary) px-4 py-1.5 text-xs font-medium text-(--color-on-primary) transition hover:opacity-90"
           >
             <Sparkles className="h-3.5 w-3.5" />
-            Crear primera página con IA
+            {t("recent.crearPrimera")}
           </Link>
         </div>
       ) : (
@@ -60,7 +62,7 @@ export function RecentPages() {
                 </a>
               </div>
               <div className="p-4">
-                <p className="text-sm font-medium text-white">{page.name}</p>
+                <p className="text-sm font-medium text-(--color-text)">{page.name}</p>
                 <div className="mt-1 flex items-center justify-between">
                   <p className="text-xs text-(--color-muted-2)">
                     {page.source} · {page.credits} créditos
@@ -69,7 +71,7 @@ export function RecentPages() {
                     className={`rounded-full px-2 py-0.5 text-[11px] ${
                       page.status === "Publicada"
                         ? "bg-emerald-500/10 text-emerald-400"
-                        : "bg-white/5 text-(--color-muted)"
+                        : "bg-(--color-panel-2) text-(--color-muted)"
                     }`}
                   >
                     {page.status}

@@ -14,28 +14,30 @@ import {
 } from "lucide-react"
 import { Logo } from "./Logo"
 import { useAuth } from "../lib/auth"
+import { useLanguage, type TranslationKey } from "../lib/i18n"
 
-const topItems = [{ icon: LayoutGrid, label: "Dashboard", to: "/app" }]
+const inicioItems = [{ icon: LayoutGrid, labelKey: "sidebar.dashboard" as TranslationKey, to: "/app" }]
 
 const paginasItems = [
-  { icon: Sparkles, label: "Crear Product Page", to: "/app/generar" },
-  { icon: LayoutTemplate, label: "Landing con Imágenes", to: "/app/landing" },
-  { icon: FileText, label: "Tus páginas", to: "/app/paginas" },
+  { icon: Sparkles, labelKey: "sidebar.crearProductPage" as TranslationKey, to: "/app/generar" },
+  { icon: LayoutTemplate, labelKey: "sidebar.landingImagenes" as TranslationKey, to: "/app/landing" },
+  { icon: FileText, labelKey: "sidebar.tusPaginas" as TranslationKey, to: "/app/paginas" },
 ]
 
-const midItems = [{ icon: ImagePlus, label: "Imágenes IA", to: "/app/imagenes" }]
-
-const bottomItems = [
-  { icon: Plug, label: "Integraciones", to: "/app/integraciones" },
-  { icon: Settings, label: "Configuración", to: "/app/configuracion" },
-]
+const imagenesItems = [{ icon: ImagePlus, labelKey: "sidebar.imagenesIA" as TranslationKey, to: "/app/imagenes" }]
 
 const supportItems = [
-  { icon: CircleHelp, label: "Centro de ayuda", to: "/app/ayuda" },
+  { icon: CircleHelp, labelKey: "sidebar.centroAyuda" as TranslationKey, to: "/app/ayuda" },
+]
+
+const cuentaItems = [
+  { icon: Plug, labelKey: "sidebar.integraciones" as TranslationKey, to: "/app/integraciones" },
+  { icon: Settings, labelKey: "sidebar.configuracion" as TranslationKey, to: "/app/configuracion" },
 ]
 
 export function Sidebar() {
   const { pathname } = useLocation()
+  const { t } = useLanguage()
 
   return (
     <aside className="relative flex h-full w-64 shrink-0 flex-col border-r border-dashed border-(--color-border) bg-(--color-panel) p-4">
@@ -50,37 +52,46 @@ export function Sidebar() {
 
       <div className="flex flex-col gap-0.5">
         <p className="px-3 pb-1.5 text-[11px] font-medium tracking-wide text-(--color-muted-2) uppercase">
-          Flujo
+          {t("sidebar.inicio")}
         </p>
-
-        {topItems.map((item) => (
-          <NavItem key={item.label} {...item} active={pathname === item.to} />
-        ))}
-
-        {midItems.map((item) => (
-          <NavItem key={item.label} {...item} active={pathname === item.to} />
-        ))}
-
-        {bottomItems.map((item) => (
-          <NavItem key={item.label} {...item} active={pathname === item.to} />
+        {inicioItems.map((item) => (
+          <NavItem key={item.labelKey} icon={item.icon} label={t(item.labelKey)} to={item.to} active={pathname === item.to} />
         ))}
       </div>
 
       <div className="mt-5 flex flex-col gap-0.5">
         <p className="px-3 pb-1.5 text-[11px] font-medium tracking-wide text-(--color-muted-2) uppercase">
-          Páginas
+          {t("sidebar.paginas")}
         </p>
         {paginasItems.map((item) => (
-          <NavItem key={item.label} {...item} active={pathname === item.to} />
+          <NavItem key={item.labelKey} icon={item.icon} label={t(item.labelKey)} to={item.to} active={pathname === item.to} />
         ))}
       </div>
 
       <div className="mt-5 flex flex-col gap-0.5">
         <p className="px-3 pb-1.5 text-[11px] font-medium tracking-wide text-(--color-muted-2) uppercase">
-          Soporte
+          {t("sidebar.imagenesGrupo")}
+        </p>
+        {imagenesItems.map((item) => (
+          <NavItem key={item.labelKey} icon={item.icon} label={t(item.labelKey)} to={item.to} active={pathname === item.to} />
+        ))}
+      </div>
+
+      <div className="mt-5 flex flex-col gap-0.5">
+        <p className="px-3 pb-1.5 text-[11px] font-medium tracking-wide text-(--color-muted-2) uppercase">
+          {t("sidebar.soporte")}
         </p>
         {supportItems.map((item) => (
-          <NavItem key={item.label} {...item} active={pathname === item.to} />
+          <NavItem key={item.labelKey} icon={item.icon} label={t(item.labelKey)} to={item.to} active={pathname === item.to} />
+        ))}
+      </div>
+
+      <div className="mt-5 flex flex-col gap-0.5">
+        <p className="px-3 pb-1.5 text-[11px] font-medium tracking-wide text-(--color-muted-2) uppercase">
+          {t("sidebar.cuenta")}
+        </p>
+        {cuentaItems.map((item) => (
+          <NavItem key={item.labelKey} icon={item.icon} label={t(item.labelKey)} to={item.to} active={pathname === item.to} />
         ))}
       </div>
 
@@ -130,6 +141,7 @@ function NavItem({
 }
 
 function CreditsCard() {
+  const { t } = useLanguage()
   const used = 0
   const total = 500
   const pct = Math.round((used / total) * 100)
@@ -184,10 +196,10 @@ function CreditsCard() {
           </div>
           <div>
             <p className="text-sm font-medium text-white">
-              {total - used} créditos
+              {total - used} {t("sidebar.creditos")}
             </p>
             <p className="text-xs text-(--color-muted-2)">
-              de {total} este mes
+              {t("sidebar.deEsteMes", { total })}
             </p>
           </div>
         </div>
@@ -198,7 +210,7 @@ function CreditsCard() {
           />
         </div>
         <button className="w-full rounded-lg bg-white py-2 text-sm font-medium text-black transition hover:bg-white/90">
-          Comprar créditos
+          {t("sidebar.comprarCreditos")}
         </button>
         <div className="t-tilt-glare" />
       </div>
