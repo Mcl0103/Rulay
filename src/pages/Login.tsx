@@ -99,7 +99,7 @@ export function Login() {
                 disabled={sending || !email}
                 className="rounded-xl bg-(--color-accent) px-4 py-2.5 text-sm font-medium text-white transition hover:bg-(--color-accent)/90 disabled:cursor-not-allowed disabled:opacity-50"
               >
-                {sending ? "Enviando…" : "Enviar link mágico"}
+                {sending ? "Enviando…" : "Iniciar con correo"}
               </button>
             </form>
           )}
