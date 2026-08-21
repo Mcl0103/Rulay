@@ -180,6 +180,12 @@ const dict = {
   "config.guardarCambios": { es: "Guardar cambios", en: "Save changes" },
   "config.guardado": { es: "Guardado", en: "Saved" },
   "config.cambiosSinGuardar": { es: "Tienes cambios de apariencia sin guardar", en: "You have unsaved appearance changes" },
+
+  // Guardia de cambios sin guardar (toast al intentar salir)
+  "guard.cambiosSinGuardar": { es: "Tienes cambios sin guardar", en: "You have unsaved changes" },
+  "guard.seguirEditando": { es: "Seguir editando", en: "Keep editing" },
+  "guard.descartar": { es: "Descartar", en: "Discard" },
+  "guard.guardarYSalir": { es: "Guardar y salir", en: "Save and leave" },
   "config.privacidad": { es: "Privacidad", en: "Privacy" },
   "config.exportarDatos": { es: "Exportar mis datos", en: "Export my data" },
   "config.borrarDatos": { es: "Borrar mis datos y cerrar cuenta", en: "Delete my data and close account" },

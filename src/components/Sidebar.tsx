@@ -1,5 +1,6 @@
 import { useRef } from "react"
-import { Link, useLocation } from "react-router-dom"
+import { useLocation } from "react-router-dom"
+import { GuardedLink } from "../lib/unsavedGuard"
 import {
   LayoutGrid,
   FileText,
@@ -115,7 +116,7 @@ function NavItem({
   active?: boolean
 }) {
   return (
-    <Link
+    <GuardedLink
       to={to}
       className={`relative flex items-center gap-2.5 overflow-hidden rounded-lg px-3 py-1.5 text-sm transition ${
         active
@@ -136,7 +137,7 @@ function NavItem({
           }}
         />
       )}
-    </Link>
+    </GuardedLink>
   )
 }
 
@@ -225,7 +226,7 @@ function ProfileCard() {
   const avatarUrl = user?.user_metadata?.avatar_url as string | undefined
 
   return (
-    <Link
+    <GuardedLink
       to="/app/perfil"
       className="mt-2 flex w-full items-center gap-2.5 rounded-xl px-2 py-2 text-left transition hover:bg-(--color-panel-2)"
     >
@@ -247,6 +248,6 @@ function ProfileCard() {
         </p>
       </div>
       <ChevronsUpDown className="h-3.5 w-3.5 shrink-0 text-(--color-muted-2)" />
-    </Link>
+    </GuardedLink>
   )
 }

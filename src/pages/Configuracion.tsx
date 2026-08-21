@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react"
-import { Link, useNavigate } from "react-router-dom"
+import { useNavigate } from "react-router-dom"
 import {
   ArrowLeft,
   Globe,
@@ -21,6 +21,7 @@ import { StaggerHeader } from "../components/StaggerHeader"
 import { useAuth } from "../lib/auth"
 import { useTheme, type Theme } from "../lib/theme"
 import { useLanguage, type Lang } from "../lib/i18n"
+import { GuardedLink, useUnsavedGuard } from "../lib/unsavedGuard"
 
 const countryCurrency: Record<string, string> = {
   Colombia: "COP",
@@ -76,6 +77,10 @@ export function Configuracion() {
   const [saved, setSaved] = useState(false)
   const hasUnsavedAppearance = pendingTheme !== theme || pendingLang !== lang
 
+  const [loaded, setLoaded] = useState(false)
+  const savedSnapshotRef = useRef("")
+  const { setDirty, registerSave } = useUnsavedGuard()
+
   useEffect(() => {
     setPais(localStorage.getItem("rulay_pais") ?? "")
     setIdioma(localStorage.getItem("rulay_idioma") ?? "")
@@ -87,6 +92,39 @@ export function Configuracion() {
     setAutoRecargaPaquete(localStorage.getItem("rulay_auto_recarga_paquete") ?? "Starter")
     setWatermarkOn(localStorage.getItem("rulay_watermark_on") === "true")
     setWatermarkImg(localStorage.getItem("rulay_watermark_img"))
+    setLoaded(true)
+  }, [])
+
+  const currentSnapshot = JSON.stringify({
+    pais,
+    welcomeMessage,
+    lowCreditsAlert,
+    lowCreditsThreshold,
+    autoRecarga,
+    autoRecargaThreshold,
+    autoRecargaPaquete,
+    watermarkOn,
+    watermarkImg,
+    pendingTheme,
+    pendingLang,
+  })
+
+  useEffect(() => {
+    if (!loaded) return
+    if (!savedSnapshotRef.current) savedSnapshotRef.current = currentSnapshot
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [loaded])
+
+  const dirty = loaded && currentSnapshot !== savedSnapshotRef.current
+
+  useEffect(() => {
+    setDirty(dirty)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [dirty])
+
+  useEffect(() => {
+    return () => setDirty(false)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   function handlePaisChange(value: string) {
@@ -114,9 +152,17 @@ export function Configuracion() {
     if (watermarkImg) localStorage.setItem("rulay_watermark_img", watermarkImg)
     if (pendingTheme !== theme) setTheme(pendingTheme)
     if (pendingLang !== lang) setLang(pendingLang)
+    savedSnapshotRef.current = currentSnapshot
+    setDirty(false)
     setSaved(true)
     setTimeout(() => setSaved(false), 1800)
   }
+
+  useEffect(() => {
+    registerSave(handleSave)
+    return () => registerSave(null)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [currentSnapshot, theme, lang])
 
   function handleExportData() {
     const data: Record<string, string | null> = {}
@@ -149,13 +195,13 @@ export function Configuracion() {
     <div className="flex h-screen bg-(--color-base)">
       <Sidebar />
       <main data-theme={theme} className="flex-1 overflow-y-auto bg-(--color-panel)/40 p-6">
-        <Link
+        <GuardedLink
           to="/app"
           className="inline-flex items-center gap-2 text-sm text-(--color-muted) transition hover:text-(--color-text)"
         >
           <ArrowLeft className="h-4 w-4" />
           {t("sidebar.dashboard")}
-        </Link>
+        </GuardedLink>
 
         <div className="mx-auto mt-6 max-w-2xl pb-10">
           <StaggerHeader title={t("config.titulo")} subtitle={t("config.subtitulo")} />
@@ -416,12 +462,12 @@ export function Configuracion() {
                 <p className="text-xs text-(--color-muted-2)">{t("config.nombreAvatarDesc")}</p>
               </div>
             </div>
-            <Link
+            <GuardedLink
               to="/app/perfil"
               className="shrink-0 rounded-full border border-(--color-border) px-4 py-1.5 text-xs font-medium text-(--color-muted) transition hover:border-(--color-border-hover) hover:text-(--color-text)"
             >
               {t("config.irAPerfil")}
-            </Link>
+            </GuardedLink>
           </div>
 
           <div className="mt-6 flex items-center gap-3">

@@ -2,6 +2,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom"
 import { AuthProvider } from "./lib/auth"
 import { ThemeProvider } from "./lib/theme"
 import { LanguageProvider } from "./lib/i18n"
+import { UnsavedGuardProvider } from "./lib/unsavedGuard"
 import { RequireAuth } from "./components/RequireAuth"
 import { Landing } from "./pages/Landing"
 import { Login } from "./pages/Login"
@@ -20,6 +21,7 @@ function App() {
       <AuthProvider>
       <ThemeProvider>
       <LanguageProvider>
+      <UnsavedGuardProvider>
         <Routes>
           <Route path="/" element={<Landing />} />
           <Route path="/login" element={<Login />} />
@@ -88,6 +90,7 @@ function App() {
             }
           />
         </Routes>
+      </UnsavedGuardProvider>
       </LanguageProvider>
       </ThemeProvider>
       </AuthProvider>
