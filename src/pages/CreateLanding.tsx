@@ -205,21 +205,21 @@ export function CreateLanding() {
               </div>
 
               <div>
-                <div className="mb-2 flex items-center justify-between">
+                <div className="mb-2 flex flex-wrap items-center justify-between gap-y-2">
                   <label className="text-sm text-(--color-muted)">
                     Describe tu producto y el ángulo de venta
                   </label>
                   <button
                     type="button"
                     onClick={toggleAiAngle}
-                    className={`flex items-center gap-2 rounded-full border px-3 py-1.5 text-xs transition ${
+                    className={`flex shrink-0 items-center gap-2 whitespace-nowrap rounded-full border px-3 py-1.5 text-xs transition ${
                       aiAngle
                         ? "border-(--color-accent) bg-(--color-accent)/15 text-white"
                         : "border-(--color-border) text-(--color-muted) hover:border-(--color-border-hover) hover:text-white"
                     }`}
                   >
-                    <Sparkles className="h-3.5 w-3.5" />
-                    Que lo escriba la IA
+                    <Sparkles className="h-3.5 w-3.5 shrink-0" />
+                    <span>Que lo escriba la IA</span>
                     <span className="text-(--color-muted-2)">· {AI_ANGLE_COST}cr</span>
                     <span
                       role="switch"
