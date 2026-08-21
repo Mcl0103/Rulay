@@ -13,6 +13,8 @@
   --color-muted-2: #5f5f66;
   --color-accent: #3b82f6;
   --color-accent-2: #60a5fa;
+  --color-green: #34d399;
+  --color-amber: #f5a742;
   /* texto/botón primario — el tema claro los invierte */
   --color-text: #f2f2f3;
   --color-primary: #ffffff;
@@ -41,6 +43,16 @@
 @keyframes nav-glow-pulse {
   0%, 100% { opacity: 0.65; }
   50% { opacity: 1; }
+}
+
+/* Landing — hero console lines typing in, source marquee */
+@keyframes fadein {
+  from { opacity: 0; transform: translateY(4px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+@keyframes scrollx {
+  from { transform: translateX(0); }
+  to { transform: translateX(-50%); }
 }
 
 @keyframes t-toast-in {
