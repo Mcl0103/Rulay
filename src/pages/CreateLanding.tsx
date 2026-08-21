@@ -37,7 +37,20 @@ type ReferenceMode = "ninguna" | "galeria" | "subir"
 
 const SECTION_COST = 5
 const FULL_PAGE_COST = 30 // bundle: 7 secciones sueltas = 35cr, la página completa sale con descuento
+const AI_ANGLE_COST = 1 // es texto, no imagen — mucho más barato
 const BALANCE = 180
+
+const countryCurrency: Record<string, string> = {
+  Colombia: "COP",
+  México: "MXN",
+  Perú: "PEN",
+  Chile: "CLP",
+  Argentina: "ARS",
+  Ecuador: "USD",
+  "Estados Unidos": "USD",
+  España: "EUR",
+}
+const countries = Object.keys(countryCurrency)
 
 export function CreateLanding() {
   const [shown, setShown] = useState(false)
@@ -51,10 +64,13 @@ export function CreateLanding() {
 
   const [anguloName, setAnguloName] = useState("")
   const [prompt, setPrompt] = useState("")
+  const [aiAngle, setAiAngle] = useState(false)
+  const [aiAngleToggleInit, setAiAngleToggleInit] = useState(false)
   const [advancedOpen, setAdvancedOpen] = useState(false)
   const [publico, setPublico] = useState("")
   const [precio, setPrecio] = useState("")
   const [pais, setPais] = useState("")
+  const divisa = countryCurrency[pais]
 
   const [selectedSections, setSelectedSections] = useState<SectionType[]>(["hero"])
   const isFullPage = selectedSections.length === sections.length
@@ -63,9 +79,15 @@ export function CreateLanding() {
   const referenceFileRef = useRef<HTMLInputElement>(null)
   const [referenceImage, setReferenceImage] = useState<string | null>(null)
 
-  const total = isFullPage ? FULL_PAGE_COST : selectedSections.length * SECTION_COST
+  const sectionsCost = isFullPage ? FULL_PAGE_COST : selectedSections.length * SECTION_COST
+  const total = sectionsCost + (aiAngle ? AI_ANGLE_COST : 0)
   const remaining = BALANCE - total
   const hasPhoto = photos.some((p) => p)
+
+  function toggleAiAngle() {
+    setAiAngleToggleInit(true)
+    setAiAngle((v) => !v)
+  }
 
   function toggleSection(id: SectionType) {
     setSelectedSections((prev) =>
@@ -183,18 +205,50 @@ export function CreateLanding() {
               </div>
 
               <div>
-                <label className="mb-2 block text-sm text-(--color-muted)">
-                  Describe tu producto y el ángulo de venta
-                </label>
-                <BorderBeam size="md" colorVariant="mono" strength={0.92}>
-                  <textarea
-                    rows={3}
-                    value={prompt}
-                    onChange={(e) => setPrompt(e.target.value)}
-                    placeholder="Ej. Suplemento de colágeno para mujeres de 35+ que quieren piel más firme sin procedimientos caros…"
-                    className="w-full resize-none rounded-xl border border-(--color-border) bg-(--color-panel) px-4 py-3 text-[15px] text-white placeholder:text-(--color-muted-2) transition focus:border-(--color-border-hover) focus:outline-none"
-                  />
-                </BorderBeam>
+                <div className="mb-2 flex items-center justify-between">
+                  <label className="text-sm text-(--color-muted)">
+                    Describe tu producto y el ángulo de venta
+                  </label>
+                  <button
+                    type="button"
+                    onClick={toggleAiAngle}
+                    className={`flex items-center gap-2 rounded-full border px-3 py-1.5 text-xs transition ${
+                      aiAngle
+                        ? "border-(--color-accent) bg-(--color-accent)/15 text-white"
+                        : "border-(--color-border) text-(--color-muted) hover:border-(--color-border-hover) hover:text-white"
+                    }`}
+                  >
+                    <Sparkles className="h-3.5 w-3.5" />
+                    Que lo escriba la IA
+                    <span className="text-(--color-muted-2)">· {AI_ANGLE_COST}cr</span>
+                    <span
+                      role="switch"
+                      aria-checked={aiAngle}
+                      data-on={aiAngle}
+                      className={`t-toggle t-toggle--sm relative inline-flex h-4 w-[26px] shrink-0 items-center rounded-full transition-colors ${
+                        aiAngleToggleInit ? "is-init" : ""
+                      } ${aiAngle ? "bg-(--color-accent)" : "bg-white/15"}`}
+                    >
+                      <span className="t-toggle-thumb ml-0.5 block h-3 w-3 rounded-full bg-white" />
+                    </span>
+                  </button>
+                </div>
+
+                {aiAngle ? (
+                  <p className="rounded-xl border border-dashed border-(--color-border) bg-(--color-panel) px-4 py-3 text-sm text-(--color-muted)">
+                    La IA va a inferir el ángulo de venta a partir de las fotos del producto. No hace falta que escribas nada acá.
+                  </p>
+                ) : (
+                  <BorderBeam size="md" colorVariant="mono" strength={0.92}>
+                    <textarea
+                      rows={3}
+                      value={prompt}
+                      onChange={(e) => setPrompt(e.target.value)}
+                      placeholder="Ej. Suplemento de colágeno para mujeres de 35+ que quieren piel más firme sin procedimientos caros…"
+                      className="w-full resize-none rounded-xl border border-(--color-border) bg-(--color-panel) px-4 py-3 text-[15px] text-white placeholder:text-(--color-muted-2) transition focus:border-(--color-border-hover) focus:outline-none"
+                    />
+                  </BorderBeam>
+                )}
 
                 <button
                   type="button"
@@ -223,23 +277,34 @@ export function CreateLanding() {
                     <div className="grid grid-cols-2 gap-3">
                       <div>
                         <label className="mb-1.5 block text-xs text-(--color-muted)">
-                          Precio
+                          País
+                        </label>
+                        <select
+                          value={pais}
+                          onChange={(e) => setPais(e.target.value)}
+                          className="w-full rounded-lg border border-(--color-border) bg-(--color-panel-2) px-3 py-2 text-sm text-white focus:outline-none"
+                        >
+                          <option value="">Selecciona…</option>
+                          {countries.map((c) => (
+                            <option key={c} value={c}>
+                              {c}
+                            </option>
+                          ))}
+                        </select>
+                        {divisa && (
+                          <p className="mt-1 text-[11px] text-(--color-muted-2)">
+                            Divisa detectada: <span className="text-(--color-accent-2)">{divisa}</span>
+                          </p>
+                        )}
+                      </div>
+                      <div>
+                        <label className="mb-1.5 block text-xs text-(--color-muted)">
+                          Precio {divisa && <span className="text-(--color-muted-2)">({divisa})</span>}
                         </label>
                         <input
                           value={precio}
                           onChange={(e) => setPrecio(e.target.value)}
-                          placeholder="$79.900"
-                          className="w-full rounded-lg border border-(--color-border) bg-(--color-panel-2) px-3 py-2 text-sm text-white placeholder:text-(--color-muted-2) focus:outline-none"
-                        />
-                      </div>
-                      <div>
-                        <label className="mb-1.5 block text-xs text-(--color-muted)">
-                          País
-                        </label>
-                        <input
-                          value={pais}
-                          onChange={(e) => setPais(e.target.value)}
-                          placeholder="Colombia"
+                          placeholder="79.900"
                           className="w-full rounded-lg border border-(--color-border) bg-(--color-panel-2) px-3 py-2 text-sm text-white placeholder:text-(--color-muted-2) focus:outline-none"
                         />
                       </div>
@@ -403,7 +468,7 @@ export function CreateLanding() {
               </div>
 
               <button
-                disabled={!hasPhoto || !prompt || selectedSections.length === 0}
+                disabled={!hasPhoto || (!prompt && !aiAngle) || selectedSections.length === 0}
                 className="flex w-fit items-center gap-2 rounded-full bg-white px-5 py-2.5 text-sm font-medium text-black transition hover:bg-white/90 disabled:cursor-not-allowed disabled:opacity-40"
               >
                 <ImageIcon className="h-4 w-4" />
@@ -429,6 +494,12 @@ export function CreateLanding() {
                       <span>{SECTION_COST} créditos</span>
                     </div>
                   ))
+                )}
+                {aiAngle && (
+                  <div className="flex justify-between text-(--color-muted)">
+                    <span>Ángulo de venta con IA</span>
+                    <span>{AI_ANGLE_COST} crédito</span>
+                  </div>
                 )}
                 <div className="mt-1 flex justify-between border-t border-(--color-border) pt-2 font-medium text-white">
                   <span>Total</span>
