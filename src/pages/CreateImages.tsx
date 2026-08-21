@@ -1,4 +1,4 @@
-import { useRef, useState } from "react"
+import { useEffect, useRef, useState } from "react"
 import { Link } from "react-router-dom"
 import {
   ArrowLeft,
@@ -15,6 +15,7 @@ import {
   Wand2,
 } from "lucide-react"
 import { Sidebar } from "../components/Sidebar"
+import { BorderBeam } from "border-beam"
 
 const productStyles = ["Estudio", "Lifestyle", "Minimal", "Exterior"]
 const adFormats = ["Oferta / descuento", "Testimonio", "Antes y después", "Lanzamiento"]
@@ -26,7 +27,7 @@ const mentions = [
 ]
 
 const IMAGE_COST = 5
-const AD_COST = 8
+const AD_COST = 5
 const BALANCE = 180
 
 export function CreateImages() {
@@ -36,6 +37,7 @@ export function CreateImages() {
   const [style, setStyle] = useState("Estudio")
   const [format, setFormat] = useState("Oferta / descuento")
   const [withAvatar, setWithAvatar] = useState(false)
+  const [avatarToggleInit, setAvatarToggleInit] = useState(false)
   const [language, setLanguage] = useState("Español")
   const [openMenu, setOpenMenu] = useState<
     "producto" | "style" | "format" | "lang" | null
@@ -43,6 +45,28 @@ export function CreateImages() {
   const [productSource, setProductSource] = useState<string | null>(null)
   const [mentionOpen, setMentionOpen] = useState(false)
   const textareaRef = useRef<HTMLTextAreaElement>(null)
+  const pillRef = useRef<HTMLSpanElement>(null)
+  const productoTabRef = useRef<HTMLButtonElement>(null)
+  const anuncioTabRef = useRef<HTMLButtonElement>(null)
+  const firstTabRender = useRef(true)
+
+  useEffect(() => {
+    const pill = pillRef.current
+    const el = mode === "producto" ? productoTabRef.current : anuncioTabRef.current
+    if (!pill || !el) return
+
+    if (firstTabRender.current) {
+      pill.style.transition = "none"
+      pill.style.transform = `translateX(${el.offsetLeft}px)`
+      pill.style.width = `${el.offsetWidth}px`
+      pill.getBoundingClientRect()
+      pill.style.transition = ""
+      firstTabRender.current = false
+    } else {
+      pill.style.transform = `translateX(${el.offsetLeft}px)`
+      pill.style.width = `${el.offsetWidth}px`
+    }
+  }, [mode])
 
   function handlePromptChange(e: React.ChangeEvent<HTMLTextAreaElement>) {
     const value = e.target.value
@@ -94,25 +118,27 @@ export function CreateImages() {
           </h1>
 
           {/* Mode switch */}
-          <div className="mt-6 inline-flex self-center rounded-full border border-(--color-border) bg-(--color-panel) p-1">
+          <div
+            role="tablist"
+            className="t-tabs mt-6 self-center border border-(--color-border)"
+          >
+            <span ref={pillRef} className="t-tabs-pill" aria-hidden="true" />
             <button
+              ref={productoTabRef}
+              role="tab"
+              aria-selected={mode === "producto"}
               onClick={() => setMode("producto")}
-              className={`flex items-center gap-2 rounded-full px-4 py-1.5 text-sm transition ${
-                mode === "producto"
-                  ? "bg-white text-black"
-                  : "text-(--color-muted) hover:text-white"
-              }`}
+              className="t-tab flex items-center gap-2 text-sm"
             >
               <Tag className="h-3.5 w-3.5" />
               Imágenes de producto
             </button>
             <button
+              ref={anuncioTabRef}
+              role="tab"
+              aria-selected={mode === "anuncio"}
               onClick={() => setMode("anuncio")}
-              className={`flex items-center gap-2 rounded-full px-4 py-1.5 text-sm transition ${
-                mode === "anuncio"
-                  ? "bg-white text-black"
-                  : "text-(--color-muted) hover:text-white"
-              }`}
+              className="t-tab flex items-center gap-2 text-sm"
             >
               <Megaphone className="h-3.5 w-3.5" />
               Anuncio estático
@@ -131,6 +157,7 @@ export function CreateImages() {
             </div>
           )}
 
+          <BorderBeam size="md" colorVariant="mono" strength={0.92}>
           <div className="relative mt-4 rounded-2xl border border-(--color-border) bg-(--color-panel) p-4 text-left transition focus-within:border-(--color-border-hover)">
             <textarea
               ref={textareaRef}
@@ -209,8 +236,12 @@ export function CreateImages() {
               {mode === "producto" && (
                 <>
                   <button
-                    onClick={() => setWithAvatar((v) => !v)}
-                    className={`flex items-center gap-1.5 rounded-full border px-3 py-1.5 text-xs transition ${
+                    type="button"
+                    onClick={() => {
+                      setAvatarToggleInit(true)
+                      setWithAvatar((v) => !v)
+                    }}
+                    className={`flex items-center gap-2 rounded-full border px-3 py-1.5 text-xs transition ${
                       withAvatar
                         ? "border-(--color-accent) bg-(--color-accent)/15 text-(--color-accent-2)"
                         : "border-(--color-border) text-(--color-muted) hover:border-(--color-border-hover) hover:text-white"
@@ -218,6 +249,16 @@ export function CreateImages() {
                   >
                     <User className="h-3.5 w-3.5" />
                     Con avatar
+                    <span
+                      role="switch"
+                      aria-checked={withAvatar}
+                      data-on={withAvatar}
+                      className={`t-toggle t-toggle--sm relative inline-flex h-4 w-[26px] shrink-0 items-center rounded-full transition-colors ${
+                        avatarToggleInit ? "is-init" : ""
+                      } ${withAvatar ? "bg-(--color-accent)" : "bg-white/15"}`}
+                    >
+                      <span className="t-toggle-thumb ml-0.5 block h-3 w-3 rounded-full bg-white" />
+                    </span>
                   </button>
 
                   <Dropdown
@@ -277,6 +318,7 @@ export function CreateImages() {
               </button>
             </div>
           </div>
+          </BorderBeam>
 
           <p className="mt-3 text-xs text-(--color-muted-2)">
             {mode === "producto" ? "Esta imagen" : "Este anuncio"} cuesta{" "}

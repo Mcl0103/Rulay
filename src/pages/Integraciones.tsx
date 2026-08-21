@@ -79,7 +79,13 @@ export function Integraciones() {
                   disabled={connecting}
                   className="shrink-0 rounded-full bg-white px-4 py-1.5 text-xs font-medium text-black transition hover:bg-white/90 disabled:cursor-not-allowed disabled:opacity-60"
                 >
-                  {connecting ? "Conectando…" : "Conectar Shopify"}
+                  {connecting ? (
+                    <span className="t-shimmer t-shimmer--on-light" data-text="Conectando…">
+                      Conectando…
+                    </span>
+                  ) : (
+                    "Conectar Shopify"
+                  )}
                 </button>
               )}
             </div>

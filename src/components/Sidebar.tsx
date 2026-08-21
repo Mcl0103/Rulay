@@ -1,3 +1,4 @@
+import { useRef } from "react"
 import { Link, useLocation } from "react-router-dom"
 import {
   LayoutGrid,
@@ -112,31 +113,75 @@ function CreditsCard() {
   const used = 0
   const total = 500
   const pct = Math.round((used / total) * 100)
+  const tiltRef = useRef<HTMLDivElement>(null)
+  const cardRef = useRef<HTMLDivElement>(null)
+
+  function handlePointerMove(e: React.PointerEvent<HTMLDivElement>) {
+    const el = tiltRef.current
+    const card = cardRef.current
+    if (!el || !card) return
+
+    const rect = el.getBoundingClientRect()
+    const px = (e.clientX - rect.left) / rect.width
+    const py = (e.clientY - rect.top) / rect.height
+    const maxDeg = 8
+    const ry = (px - 0.5) * maxDeg * 2
+    const rx = -(py - 0.5) * maxDeg * 2
+
+    card.style.setProperty("--tilt-rx", `${rx}deg`)
+    card.style.setProperty("--tilt-ry", `${ry}deg`)
+    card.style.setProperty("--tilt-gx", `${px * 100}%`)
+    card.style.setProperty("--tilt-gy", `${py * 100}%`)
+    card.classList.add("is-tilting")
+    el.classList.add("is-hover")
+  }
+
+  function handlePointerLeave() {
+    const card = cardRef.current
+    const el = tiltRef.current
+    if (!card || !el) return
+
+    card.classList.remove("is-tilting")
+    el.classList.remove("is-hover")
+    card.style.setProperty("--tilt-rx", "0deg")
+    card.style.setProperty("--tilt-ry", "0deg")
+  }
 
   return (
-    <div className="relative rounded-xl border border-(--color-border) bg-(--color-panel-2) p-4">
-      <div className="mb-3 flex items-center gap-2">
-        <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-(--color-accent)/15 text-(--color-accent-2)">
-          <Coins className="h-3.5 w-3.5" />
+    <div
+      ref={tiltRef}
+      className="t-tilt"
+      onPointerMove={handlePointerMove}
+      onPointerLeave={handlePointerLeave}
+    >
+      <div
+        ref={cardRef}
+        className="t-tilt-card border border-(--color-border) bg-(--color-panel-2) p-4"
+      >
+        <div className="mb-3 flex items-center gap-2">
+          <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-(--color-accent)/15 text-(--color-accent-2)">
+            <Coins className="h-3.5 w-3.5" />
+          </div>
+          <div>
+            <p className="text-sm font-medium text-white">
+              {total - used} créditos
+            </p>
+            <p className="text-xs text-(--color-muted-2)">
+              de {total} este mes
+            </p>
+          </div>
         </div>
-        <div>
-          <p className="text-sm font-medium text-white">
-            {total - used} créditos
-          </p>
-          <p className="text-xs text-(--color-muted-2)">
-            de {total} este mes
-          </p>
+        <div className="mb-3 h-1.5 w-full overflow-hidden rounded-full bg-black/40">
+          <div
+            className="h-full rounded-full bg-gradient-to-r from-violet-500 to-fuchsia-500"
+            style={{ width: `${pct}%` }}
+          />
         </div>
+        <button className="w-full rounded-lg bg-white py-2 text-sm font-medium text-black transition hover:bg-white/90">
+          Comprar créditos
+        </button>
+        <div className="t-tilt-glare" />
       </div>
-      <div className="mb-3 h-1.5 w-full overflow-hidden rounded-full bg-black/40">
-        <div
-          className="h-full rounded-full bg-gradient-to-r from-violet-500 to-fuchsia-500"
-          style={{ width: `${pct}%` }}
-        />
-      </div>
-      <button className="w-full rounded-lg bg-white py-2 text-sm font-medium text-black transition hover:bg-white/90">
-        Comprar créditos
-      </button>
     </div>
   )
 }

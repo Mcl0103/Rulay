@@ -110,7 +110,13 @@ export function Perfil() {
                   disabled={uploading}
                   className="rounded-full border border-(--color-border) px-3 py-1.5 text-xs text-(--color-muted) transition hover:border-(--color-border-hover) hover:text-white"
                 >
-                  {uploading ? "Subiendo…" : "Cambiar foto"}
+                  {uploading ? (
+                    <span className="t-shimmer" data-text="Subiendo…">
+                      Subiendo…
+                    </span>
+                  ) : (
+                    "Cambiar foto"
+                  )}
                 </button>
                 <p className="mt-1.5 text-xs text-(--color-muted-2)">
                   PNG o JPG, máx 2MB.
@@ -147,7 +153,31 @@ export function Perfil() {
               disabled={saving}
               className="mt-6 rounded-full bg-white px-5 py-2 text-sm font-medium text-black transition hover:bg-white/90 disabled:cursor-not-allowed disabled:opacity-60"
             >
-              {saving ? "Guardando…" : saved ? "Guardado ✓" : "Guardar cambios"}
+              {saving ? (
+                <span className="t-shimmer t-shimmer--on-light" data-text="Guardando…">
+                  Guardando…
+                </span>
+              ) : saved ? (
+                <span className="inline-flex items-center gap-1.5">
+                  <span className="t-success-check" data-state="in" aria-hidden="true">
+                    <svg
+                      viewBox="0 0 24 24"
+                      width="14"
+                      height="14"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="2.5"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    >
+                      <path d="M4 12l5 5L20 6" style={{ strokeDasharray: 24, strokeDashoffset: 24 }} />
+                    </svg>
+                  </span>
+                  Guardado
+                </span>
+              ) : (
+                "Guardar cambios"
+              )}
             </button>
           </div>
 
