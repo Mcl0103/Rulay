@@ -268,8 +268,8 @@ body {
   position: relative;
   display: inline-flex;
   align-items: center;
-  gap: 3px;
-  padding: 3px;
+  gap: 6px;
+  padding: 5px;
   border-radius: 48px;
   background: var(--tabs-bar-bg);
 }
@@ -278,31 +278,39 @@ body {
   appearance: none;
   border: 0;
   background: transparent;
-  height: 30px;
-  padding: 4px 12px;
+  height: 34px;
+  padding: 6px 18px;
   color: var(--tabs-text-muted);
   cursor: pointer;
   border-radius: 48px;
   z-index: 1;
-  transition: color var(--tabs-dur) var(--tabs-ease);
+  transition:
+    color var(--tabs-dur) var(--tabs-ease),
+    transform 150ms var(--tabs-ease);
 }
-.t-tab:not([aria-selected="true"]):hover,
+.t-tab:not([aria-selected="true"]):hover {
+  color: var(--tabs-text-active);
+  background: rgba(255, 255, 255, 0.06);
+}
 .t-tab[aria-selected="true"] {
   color: var(--tabs-text-active);
+}
+.t-tab:active {
+  transform: scale(0.96);
 }
 
 .t-tabs-pill {
   position: absolute;
-  top: 3px;
+  top: 5px;
   left: 0;
-  height: 30px;
+  height: 34px;
   width: 0;
   background: var(--tabs-pill-bg);
   border-radius: 48px;
   transform: translateX(0);
   transition:
-    transform var(--tabs-dur) var(--tabs-ease),
-    width     var(--tabs-dur) var(--tabs-ease);
+    transform 320ms var(--tabs-ease),
+    width     320ms var(--tabs-ease);
   will-change: transform, width;
   z-index: 0;
   pointer-events: none;
