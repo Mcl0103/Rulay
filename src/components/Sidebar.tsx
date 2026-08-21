@@ -9,6 +9,7 @@ import {
   Coins,
   ChevronsUpDown,
   Sparkles,
+  LayoutTemplate,
 } from "lucide-react"
 import { Logo } from "./Logo"
 import { useAuth } from "../lib/auth"
@@ -17,6 +18,7 @@ const topItems = [{ icon: LayoutGrid, label: "Dashboard", to: "/app" }]
 
 const paginasItems = [
   { icon: Sparkles, label: "Crear Product Page", to: "/app/generar" },
+  { icon: LayoutTemplate, label: "Landing con Imágenes", to: "/app/landing" },
   { icon: FileText, label: "Tus páginas", to: "/app/paginas" },
 ]
 

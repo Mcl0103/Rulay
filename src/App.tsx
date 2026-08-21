@@ -6,6 +6,7 @@ import { Login } from "./pages/Login"
 import { Dashboard } from "./pages/Dashboard"
 import { CreatePage } from "./pages/CreatePage"
 import { CreateImages } from "./pages/CreateImages"
+import { CreateLanding } from "./pages/CreateLanding"
 import { Pages } from "./pages/Pages"
 import { Integraciones } from "./pages/Integraciones"
 import { Perfil } from "./pages/Perfil"
@@ -38,6 +39,14 @@ function App() {
             element={
               <RequireAuth>
                 <CreateImages />
+              </RequireAuth>
+            }
+          />
+          <Route
+            path="/app/landing"
+            element={
+              <RequireAuth>
+                <CreateLanding />
               </RequireAuth>
             }
           />
