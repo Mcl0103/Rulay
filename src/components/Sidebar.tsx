@@ -37,7 +37,12 @@ export function Sidebar() {
     <aside className="relative flex h-full w-64 shrink-0 flex-col border-r border-dashed border-(--color-border) bg-(--color-panel) p-4">
       <span className="corner-dot" style={{ left: "100%", top: 0 }} />
       <span className="corner-dot" style={{ left: "100%", bottom: 0 }} />
-      <Logo className="mb-4" />
+      <div className="mb-4 flex items-center gap-2">
+        <Logo />
+        <span className="font-serif text-[17px] text-white">
+          Rulay<span className="text-(--color-accent-2)">.AI</span>
+        </span>
+      </div>
 
       <div className="flex flex-col gap-0.5">
         <p className="px-3 pb-1.5 text-[11px] font-medium tracking-wide text-(--color-muted-2) uppercase">
@@ -99,7 +104,7 @@ function NavItem({
       to={to}
       className={`relative flex items-center gap-2.5 overflow-hidden rounded-lg px-3 py-1.5 text-sm transition ${
         active
-          ? "bg-gradient-to-r from-(--color-panel-2) via-(--color-panel-2) to-(--color-accent)/25 text-white"
+          ? "bg-gradient-to-r from-(--color-panel-2) via-(--color-panel-2) to-(--color-accent)/12 text-white"
           : "text-(--color-muted) hover:bg-(--color-panel-2)/60 hover:text-white"
       }`}
     >
@@ -108,11 +113,11 @@ function NavItem({
       {active && (
         <span
           aria-hidden="true"
-          className="pointer-events-none absolute inset-y-0 right-0 w-1"
+          className="pointer-events-none absolute inset-y-0 right-0 w-[3px] animate-[nav-glow-pulse_2.4s_ease-in-out_infinite]"
           style={{
-            background: "var(--color-accent-2)",
-            boxShadow:
-              "0 0 10px 2px var(--color-accent), 0 0 22px 6px var(--color-accent)",
+            background:
+              "linear-gradient(180deg, transparent 0%, var(--color-accent-2) 50%, transparent 100%)",
+            boxShadow: "0 0 8px 1px rgba(59,130,246,0.55)",
           }}
         />
       )}
