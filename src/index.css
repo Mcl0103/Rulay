@@ -232,20 +232,6 @@ body {
   .t-loader-ring-pro { animation: none; }
 }
 
-@keyframes float-x-a {
-  0%, 100% { transform: translateX(-8px); }
-  50% { transform: translateX(8px); }
-}
-@keyframes float-x-b {
-  0%, 100% { transform: translateX(7px); }
-  50% { transform: translateX(-7px); }
-}
-.t-float-x-a { animation: float-x-a 8s ease-in-out infinite; }
-.t-float-x-b { animation: float-x-b 9.5s ease-in-out infinite; }
-@media (prefers-reduced-motion: reduce) {
-  .t-float-x-a, .t-float-x-b { animation: none; }
-}
-
 .t-stagger.is-shown .t-stagger-line {
   opacity: 1;
   transform: translateY(0);

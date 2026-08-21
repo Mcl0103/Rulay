@@ -6,62 +6,6 @@ import { Loader } from "../components/Loader"
 
 const SOURCES = ["AliExpress", "Amazon", "Shopify", "Dropi", "Aliclik", "TikTok Shop"]
 
-const LOGO_ASCII = ` ;-l\`.              ....
- "fo%apZCcr|[~!:'               ..
-   :Y$$$$$$$$$@8#hp0Yx\\{_i:\`.              ..
-     >Q$$%BBB@$$$$$$$$$$$@%Mhp0Yn/{_i;\`.          .
-       ]b$$B@@@@@@BBBBBB@@$$$$$$$$$$@%Mhp0Yn/{_!^
-        .\\#$$B@@@@@@@@@@@@@@@BBBBBB@@$$$$$$$$$$BMpc]\`
-          "v%$@BBBB@@@@@@@@@@@@@@@@@@@@@BBBBBB@$$$$$*vI
-            !L$$$$$$$$$@BBBBBB@@@@@@@@@@@@@@@@@@@BB@$$8r
-              ~jcCmb*&B$$$$$$$$$$$@@BBBBBB@@@@@@@@@@@B$$0'
-                    '"l<])fvJZdaW%$$$$$$$$$$@@@@@@@@@@@B$J
-               ..              .^I>-1tuY0paW$@@@@@@@@@@@B$-
-                         ...              '"j@@@@@@@@@@@B@X
-                                   ...'..   IB@@@@@@@@@@@$Z
-                                .        \`![J@@@@@@@@@@@B@C
-                         ..        'l?tYq#B$$@@@@@@@@@@@B\${
-                   ..        ^i[jUq#B$$$$$$BB@@@@@@@@@BB$Q
-                      .:~)uQbW@$$$$$$@BBB@@@@@@@@@@@B@$$J'
-                  </zma8$$$$$$@BBBB@@@@@@@@@@@BBB@$$$$p{
-                 _$$$$$$@BBB@@@@@@@@@@@BBBB@$$$$$$&dv+
-                 {$BBB@@@@@@@@@@@@@@@@$$$$$@WbQu)~,
-                 [$@@@@@@@@@@@@@@@@@@@awJj}i"       .
-                 }$@@@@@@@@$$B@@@@@@@@U'       ..
-                 }$@@@@@@@$ok$@@@@@@@@$a]  .
-                 }@B@@@@@B$m'X$$B@@@@@B$$z^
-                 {$$$BBB@B$p  ]o$B@@@@@@@$a?
-                 iOaB$$$$@@w . "J$$B@@@@@B$$c\` .
-                   .l[x0a%$b     )W$B@@@@@@@$h-
-                        .I}}      IZ$@@@@@@@B$@c\`
-                      .          .  jB$B@@@@@@@$k_
-                                     ~k$@BBB@@@B$@v'
-                                      'X$$$$$$@@BB$k+
-                                        -rUwa&$$$$$$$c'
-                                            ."i]\\vQp*$h].
-                                         .          \`I]\\: \``
-
-const SPARKLE_ASCII = `                  <umkkqY[
-                 v$$$$$$$$p;
-              . 1$BBBBBBBB$q
-              . b@B@@@@@@@B$- .
-            .  ($B@@@@@@@@B@p  .
-      ..     ./B@@@@@@@@@@@B$O;      .
-          ^<fk$@@@@@@@@@@@@@B$&Y];.
-     <\\c0bW$$$B@@@@@@@@@@@@@@B$$$%oqCx]^
-   }k$$$$$$@BB@@@@@@@@@@@@@@@@@BB$$$$$$Mj
-  ]$$BBBBB@@@@@@@@@@@@@@@@@@@@@@@@BBBBB@$( .
-. {$$@BBBBB@@@@@@@@@@@@@@@@@@@@@@BBBBB@$$) .
-   |h@$$$$$$BB@@@@@@@@@@@@@@@@BB$$$$$$@h|
-     i{jz0k&$$@B@@@@@@@@@@@@B@$$8kQcf{i
-           :[J%$B@@@@@@@@@@B$@L[:
-      ...     !q$B@@@@@@@@B$o+     ...
-             . 'h@B@@@@@@@B8l .
-              . -$BB@@@@@%$x .
-                 C$$@BB@$$k\`
-                 .n#$$$$WY"
-                   '<][~^\``
-
 const CONSOLE_LINES = [
   { color: "text-(--color-muted-2)", prefix: "$", text: "pegaste el link de tu producto" },
   { color: "text-(--color-accent-2)", prefix: "→", text: "buscando tu ángulo de venta…" },
@@ -252,19 +196,7 @@ export function Landing() {
 
       {/* ---------- Hero ---------- */}
       <section className="relative overflow-hidden px-6 pt-20 pb-12">
-        <GlowBlob className="left-1/2 -top-24" opacity={0.55} />
-        <pre
-          aria-hidden="true"
-          className="t-float-x-a pointer-events-none absolute top-6 right-[16%] hidden select-none font-mono text-[9px] leading-[9px] text-(--color-accent)/20 sm:block"
-        >
-          {LOGO_ASCII}
-        </pre>
-        <pre
-          aria-hidden="true"
-          className="t-float-x-b pointer-events-none absolute top-32 left-[14%] hidden select-none font-mono text-[9px] leading-[9px] text-(--color-accent)/20 sm:block"
-        >
-          {SPARKLE_ASCII}
-        </pre>
+        <GlowBlob className="left-1/2 -top-24" opacity={0.7} size={1400} />
         <div className={`t-stagger hero-stagger relative mx-auto max-w-3xl text-center ${ready ? "is-shown" : ""}`}>
 
           <h1 className="t-stagger-line t-stagger-line--1 mx-auto max-w-[16ch] text-[2.15rem] leading-[1.04] font-black tracking-tight sm:text-6xl">
