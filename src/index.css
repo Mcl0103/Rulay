@@ -268,7 +268,7 @@ body {
   position: relative;
   display: inline-flex;
   align-items: center;
-  gap: 6px;
+  gap: 10px;
   padding: 5px;
   border-radius: 48px;
   background: var(--tabs-bar-bg);
