@@ -255,13 +255,13 @@ export function Landing() {
         <GlowBlob className="left-1/2 -top-24" opacity={0.55} />
         <pre
           aria-hidden="true"
-          className="t-float-x-a pointer-events-none absolute top-4 right-[6%] select-none font-mono text-[6px] leading-[6px] text-(--color-accent)/20 sm:top-6 sm:right-[16%] sm:text-[9px] sm:leading-[9px]"
+          className="t-float-x-a pointer-events-none absolute top-6 right-[16%] hidden select-none font-mono text-[9px] leading-[9px] text-(--color-accent)/20 sm:block"
         >
           {LOGO_ASCII}
         </pre>
         <pre
           aria-hidden="true"
-          className="t-float-x-b pointer-events-none absolute top-24 left-[4%] select-none font-mono text-[6px] leading-[6px] text-(--color-accent)/20 sm:top-32 sm:left-[14%] sm:text-[9px] sm:leading-[9px]"
+          className="t-float-x-b pointer-events-none absolute top-32 left-[14%] hidden select-none font-mono text-[9px] leading-[9px] text-(--color-accent)/20 sm:block"
         >
           {SPARKLE_ASCII}
         </pre>
@@ -276,19 +276,21 @@ export function Landing() {
             Testea diez productos en lo que antes te tomaba armar uno.
           </p>
 
-          <div className="t-stagger-line t-stagger-line--3 mt-8 flex flex-wrap items-center justify-center gap-3">
-            <Link
-              to="/login"
-              className="rounded-xl bg-gradient-to-b from-(--color-accent-2) to-(--color-accent) px-6 py-3 text-sm font-semibold text-white shadow-[0_8px_20px_-8px_rgba(59,130,246,0.6)] transition hover:brightness-110 active:scale-[0.98]"
-            >
-              Comenzar ahora
-            </Link>
-            <a
-              href="#producto"
-              className="rounded-xl border border-(--color-border) bg-(--color-panel) px-6 py-3 text-sm font-semibold transition hover:border-(--color-accent)/40"
-            >
-              Ver cómo funciona
-            </a>
+          <div className="t-stagger-line t-stagger-line--3 mt-8">
+            <div className="flex flex-wrap items-center justify-center gap-3">
+              <Link
+                to="/login"
+                className="rounded-xl bg-gradient-to-b from-(--color-accent-2) to-(--color-accent) px-6 py-3 text-sm font-semibold text-white shadow-[0_8px_20px_-8px_rgba(59,130,246,0.6)] transition hover:brightness-110 active:scale-[0.98]"
+              >
+                Comenzar ahora
+              </Link>
+              <a
+                href="#producto"
+                className="rounded-xl border border-(--color-border) bg-(--color-panel) px-6 py-3 text-sm font-semibold transition hover:border-(--color-accent)/40"
+              >
+                Ver cómo funciona
+              </a>
+            </div>
           </div>
           <p className="t-stagger-line t-stagger-line--4 mt-3 text-xs text-(--color-muted-2)">Sin suscripción · sin letra chica · sin compromiso mensual</p>
 
