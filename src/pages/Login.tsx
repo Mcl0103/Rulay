@@ -1,15 +1,31 @@
 import { useState } from "react"
-import { Link } from "react-router-dom"
 import { Mail } from "lucide-react"
 import { Logo } from "../components/Logo"
 import { useAuth } from "../lib/auth"
 
+const copyByMode = {
+  login: {
+    title: "Bienvenido de nuevo",
+    subtitle: "Ingresa a tu cuenta para seguir generando páginas.",
+    switchText: "¿No tienes cuenta?",
+    switchAction: "Crear cuenta",
+  },
+  signup: {
+    title: "Crea tu cuenta",
+    subtitle: "Genera tu primera página de producto con IA en minutos.",
+    switchText: "¿Ya tienes cuenta?",
+    switchAction: "Iniciar sesión",
+  },
+} as const
+
 export function Login() {
   const { signInWithGoogle, signInWithMagicLink } = useAuth()
+  const [mode, setMode] = useState<"login" | "signup">("login")
   const [email, setEmail] = useState("")
   const [sent, setSent] = useState(false)
   const [sending, setSending] = useState(false)
   const [error, setError] = useState<string | null>(null)
+  const copy = copyByMode[mode]
 
   async function handleMagicLink(e: React.FormEvent) {
     e.preventDefault()
@@ -25,25 +41,22 @@ export function Login() {
   }
 
   return (
-    <div className="relative flex min-h-screen items-center justify-center overflow-hidden bg-(--color-base) px-6">
-      <div
-        className="pointer-events-none absolute top-0 left-1/2 h-[600px] w-[900px] -translate-x-1/2 opacity-60"
-        style={{
-          background:
-            "radial-gradient(ellipse at center, rgba(139,92,246,0.35) 0%, rgba(139,92,246,0.08) 40%, transparent 70%)",
-        }}
-      />
+    <div className="flex min-h-screen items-center justify-center bg-(--color-base) px-6">
+      <div className="relative w-full max-w-sm overflow-hidden rounded-2xl border border-(--color-border) bg-(--color-panel)">
+        <div
+          aria-hidden="true"
+          className="pointer-events-none absolute inset-x-0 top-0 h-56"
+          style={{
+            background:
+              "radial-gradient(ellipse 70% 65% at 50% 0%, rgba(59,130,246,0.55) 0%, rgba(59,130,246,0.12) 45%, transparent 75%)",
+          }}
+        />
 
-      <div className="relative w-full max-w-sm">
-        <Link to="/" className="mb-8 flex items-center justify-center gap-2">
-          <Logo />
-          <span className="font-medium text-white">Rulay</span>
-        </Link>
-
-        <div className="rounded-2xl border border-(--color-border) bg-(--color-panel) p-6">
-          <h1 className="text-xl font-medium text-white">Inicia sesión</h1>
-          <p className="mt-1 text-sm text-(--color-muted)">
-            Genera páginas de producto con IA en minutos.
+        <div className="relative flex flex-col items-center px-6 pt-9 pb-7">
+          <Logo className="h-10 w-10" />
+          <h1 className="mt-4 font-serif text-2xl text-white">{copy.title}</h1>
+          <p className="mt-1 text-center text-sm text-(--color-muted)">
+            {copy.subtitle}
           </p>
 
           <button
@@ -54,21 +67,21 @@ export function Login() {
             Continuar con Google
           </button>
 
-          <div className="my-5 flex items-center gap-3">
+          <div className="my-5 flex w-full items-center gap-3">
             <div className="h-px flex-1 bg-(--color-border)" />
             <span className="text-xs text-(--color-muted-2)">o con tu correo</span>
             <div className="h-px flex-1 bg-(--color-border)" />
           </div>
 
           {sent ? (
-            <div className="rounded-xl border border-(--color-border) bg-(--color-panel-2) px-4 py-3 text-center">
+            <div className="w-full rounded-xl border border-(--color-border) bg-(--color-panel-2) px-4 py-3 text-center">
               <p className="text-sm text-white">Revisa tu correo</p>
               <p className="mt-1 text-xs text-(--color-muted-2)">
                 Te enviamos un link mágico a {email}
               </p>
             </div>
           ) : (
-            <form onSubmit={handleMagicLink} className="flex flex-col gap-3">
+            <form onSubmit={handleMagicLink} className="flex w-full flex-col gap-3">
               <div className="flex items-center gap-2 rounded-xl border border-(--color-border) bg-(--color-panel-2) px-4 py-2.5 transition focus-within:border-(--color-border-hover)">
                 <Mail className="h-4 w-4 shrink-0 text-(--color-muted-2)" />
                 <input
@@ -90,6 +103,17 @@ export function Login() {
               </button>
             </form>
           )}
+
+          <p className="mt-5 text-xs text-(--color-muted-2)">
+            {copy.switchText}{" "}
+            <button
+              type="button"
+              onClick={() => setMode((m) => (m === "login" ? "signup" : "login"))}
+              className="text-(--color-accent-2) hover:underline"
+            >
+              {copy.switchAction}
+            </button>
+          </p>
         </div>
       </div>
     </div>
