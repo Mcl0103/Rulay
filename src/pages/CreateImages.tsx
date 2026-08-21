@@ -1,24 +1,21 @@
-import { useEffect, useRef, useState } from "react"
+import { useState, useRef } from "react"
 import { Link } from "react-router-dom"
 import {
   ArrowLeft,
   ArrowRight,
   ChevronDown,
   Languages,
-  Megaphone,
   MousePointerClick,
-  Sparkles,
   Tag,
-  Type,
   Upload,
   User,
   Wand2,
 } from "lucide-react"
 import { Sidebar } from "../components/Sidebar"
 import { BorderBeam } from "border-beam"
+import sparkleIcon from "../assets/sparkle-icon.png"
 
 const productStyles = ["Estudio", "Lifestyle", "Minimal", "Exterior"]
-const adFormats = ["Oferta / descuento", "Testimonio", "Antes y después", "Lanzamiento"]
 const languages = ["Español", "English"]
 const mentions = [
   { label: "Producto", tag: "product" },
@@ -27,46 +24,20 @@ const mentions = [
 ]
 
 const IMAGE_COST = 5
-const AD_COST = 5
 const BALANCE = 180
 
 export function CreateImages() {
-  const [mode, setMode] = useState<"producto" | "anuncio">("producto")
   const [prompt, setPrompt] = useState("")
-  const [adText, setAdText] = useState("")
   const [style, setStyle] = useState("Estudio")
-  const [format, setFormat] = useState("Oferta / descuento")
   const [withAvatar, setWithAvatar] = useState(false)
   const [avatarToggleInit, setAvatarToggleInit] = useState(false)
   const [language, setLanguage] = useState("Español")
-  const [openMenu, setOpenMenu] = useState<
-    "producto" | "style" | "format" | "lang" | null
-  >(null)
+  const [openMenu, setOpenMenu] = useState<"producto" | "style" | "lang" | null>(
+    null,
+  )
   const [productSource, setProductSource] = useState<string | null>(null)
   const [mentionOpen, setMentionOpen] = useState(false)
   const textareaRef = useRef<HTMLTextAreaElement>(null)
-  const pillRef = useRef<HTMLSpanElement>(null)
-  const productoTabRef = useRef<HTMLButtonElement>(null)
-  const anuncioTabRef = useRef<HTMLButtonElement>(null)
-  const firstTabRender = useRef(true)
-
-  useEffect(() => {
-    const pill = pillRef.current
-    const el = mode === "producto" ? productoTabRef.current : anuncioTabRef.current
-    if (!pill || !el) return
-
-    if (firstTabRender.current) {
-      pill.style.transition = "none"
-      pill.style.transform = `translateX(${el.offsetLeft}px)`
-      pill.style.width = `${el.offsetWidth}px`
-      pill.getBoundingClientRect()
-      pill.style.transition = ""
-      firstTabRender.current = false
-    } else {
-      pill.style.transform = `translateX(${el.offsetLeft}px)`
-      pill.style.width = `${el.offsetWidth}px`
-    }
-  }, [mode])
 
   function handlePromptChange(e: React.ChangeEvent<HTMLTextAreaElement>) {
     const value = e.target.value
@@ -94,8 +65,7 @@ export function CreateImages() {
     })
   }
 
-  const total = mode === "producto" ? IMAGE_COST : AD_COST
-  const remaining = BALANCE - total
+  const remaining = BALANCE - IMAGE_COST
 
   return (
     <div className="flex h-screen bg-(--color-base)">
@@ -110,66 +80,30 @@ export function CreateImages() {
         </Link>
 
         <div className="mx-auto flex w-full max-w-2xl flex-1 flex-col justify-center py-10 text-center">
-          <div className="mx-auto flex h-10 w-10 items-center justify-center rounded-xl bg-(--color-accent)/15 text-(--color-accent-2)">
-            <Sparkles className="h-5 w-5" />
+          <div className="mx-auto flex h-14 w-14 items-center justify-center">
+            <img
+              src={sparkleIcon}
+              alt=""
+              className="h-14 w-14"
+              style={{
+                filter:
+                  "drop-shadow(0 0 10px rgba(59,130,246,0.55)) drop-shadow(0 0 24px rgba(59,130,246,0.35))",
+              }}
+            />
           </div>
           <h1 className="mt-4 text-2xl font-medium text-white">
             Crear imágenes con IA
           </h1>
 
-          {/* Mode switch */}
-          <div
-            role="tablist"
-            className="t-tabs mt-6 self-center border border-(--color-border)"
-          >
-            <span ref={pillRef} className="t-tabs-pill" aria-hidden="true" />
-            <button
-              ref={productoTabRef}
-              role="tab"
-              aria-selected={mode === "producto"}
-              onClick={() => setMode("producto")}
-              className="t-tab flex items-center gap-2 text-sm"
-            >
-              <Tag className="h-3.5 w-3.5" />
-              Imágenes de producto
-            </button>
-            <button
-              ref={anuncioTabRef}
-              role="tab"
-              aria-selected={mode === "anuncio"}
-              onClick={() => setMode("anuncio")}
-              className="t-tab flex items-center gap-2 text-sm"
-            >
-              <Megaphone className="h-3.5 w-3.5" />
-              Anuncio estático
-            </button>
-          </div>
-
-          {mode === "anuncio" && (
-            <div className="mt-4 flex items-center gap-2 rounded-xl border border-(--color-border) bg-(--color-panel) px-4 py-3 text-left transition focus-within:border-(--color-border-hover)">
-              <Type className="h-4 w-4 shrink-0 text-(--color-muted-2)" />
-              <input
-                value={adText}
-                onChange={(e) => setAdText(e.target.value)}
-                placeholder="Texto del anuncio (ej: 15% OFF hoy)"
-                className="w-full bg-transparent text-[15px] text-white placeholder:text-(--color-muted-2) focus:outline-none"
-              />
-            </div>
-          )}
-
           <BorderBeam size="md" colorVariant="mono" strength={0.92}>
-          <div className="relative mt-4 rounded-2xl border border-(--color-border) bg-(--color-panel) p-4 text-left transition focus-within:border-(--color-border-hover)">
+          <div className="relative mt-6 rounded-2xl border border-(--color-border) bg-(--color-panel) p-4 text-left transition focus-within:border-(--color-border-hover)">
             <textarea
               ref={textareaRef}
-              rows={mode === "producto" ? 3 : 2}
+              rows={3}
               value={prompt}
               onChange={handlePromptChange}
               onBlur={() => setTimeout(() => setMentionOpen(false), 150)}
-              placeholder={
-                mode === "producto"
-                  ? "Menciona tu producto para colocarlo en la escena… (usa @)"
-                  : "Describe el gancho o la escena del anuncio… (usa @)"
-              }
+              placeholder="Describe la imagen que quieres crear… (usa @)"
               className="w-full resize-none bg-transparent text-[15px] text-white placeholder:text-(--color-muted-2) focus:outline-none"
             />
 
@@ -233,65 +167,45 @@ export function CreateImages() {
                 )}
               </div>
 
-              {mode === "producto" && (
-                <>
-                  <button
-                    type="button"
-                    onClick={() => {
-                      setAvatarToggleInit(true)
-                      setWithAvatar((v) => !v)
-                    }}
-                    className={`flex items-center gap-2 rounded-full border px-3 py-1.5 text-xs transition ${
-                      withAvatar
-                        ? "border-(--color-accent) bg-(--color-accent)/15 text-(--color-accent-2)"
-                        : "border-(--color-border) text-(--color-muted) hover:border-(--color-border-hover) hover:text-white"
-                    }`}
-                  >
-                    <User className="h-3.5 w-3.5" />
-                    Con avatar
-                    <span
-                      role="switch"
-                      aria-checked={withAvatar}
-                      data-on={withAvatar}
-                      className={`t-toggle t-toggle--sm relative inline-flex h-4 w-[26px] shrink-0 items-center rounded-full transition-colors ${
-                        avatarToggleInit ? "is-init" : ""
-                      } ${withAvatar ? "bg-(--color-accent)" : "bg-white/15"}`}
-                    >
-                      <span className="t-toggle-thumb ml-0.5 block h-3 w-3 rounded-full bg-white" />
-                    </span>
-                  </button>
+              <button
+                type="button"
+                onClick={() => {
+                  setAvatarToggleInit(true)
+                  setWithAvatar((v) => !v)
+                }}
+                className={`flex items-center gap-2 rounded-full border px-3 py-1.5 text-xs transition ${
+                  withAvatar
+                    ? "border-(--color-accent) bg-(--color-accent)/15 text-(--color-accent-2)"
+                    : "border-(--color-border) text-(--color-muted) hover:border-(--color-border-hover) hover:text-white"
+                }`}
+              >
+                <User className="h-3.5 w-3.5" />
+                Con avatar
+                <span
+                  role="switch"
+                  aria-checked={withAvatar}
+                  data-on={withAvatar}
+                  className={`t-toggle t-toggle--sm relative inline-flex h-4 w-[26px] shrink-0 items-center rounded-full transition-colors ${
+                    avatarToggleInit ? "is-init" : ""
+                  } ${withAvatar ? "bg-(--color-accent)" : "bg-white/15"}`}
+                >
+                  <span className="t-toggle-thumb ml-0.5 block h-3 w-3 rounded-full bg-white" />
+                </span>
+              </button>
 
-                  <Dropdown
-                    icon={Wand2}
-                    value={style}
-                    options={productStyles}
-                    isOpen={openMenu === "style"}
-                    onToggle={() =>
-                      setOpenMenu((m) => (m === "style" ? null : "style"))
-                    }
-                    onSelect={(v) => {
-                      setStyle(v)
-                      setOpenMenu(null)
-                    }}
-                  />
-                </>
-              )}
-
-              {mode === "anuncio" && (
-                <Dropdown
-                  icon={Megaphone}
-                  value={format}
-                  options={adFormats}
-                  isOpen={openMenu === "format"}
-                  onToggle={() =>
-                    setOpenMenu((m) => (m === "format" ? null : "format"))
-                  }
-                  onSelect={(v) => {
-                    setFormat(v)
-                    setOpenMenu(null)
-                  }}
-                />
-              )}
+              <Dropdown
+                icon={Wand2}
+                value={style}
+                options={productStyles}
+                isOpen={openMenu === "style"}
+                onToggle={() =>
+                  setOpenMenu((m) => (m === "style" ? null : "style"))
+                }
+                onSelect={(v) => {
+                  setStyle(v)
+                  setOpenMenu(null)
+                }}
+              />
 
               <Dropdown
                 icon={Languages}
@@ -321,8 +235,8 @@ export function CreateImages() {
           </BorderBeam>
 
           <p className="mt-3 text-xs text-(--color-muted-2)">
-            {mode === "producto" ? "Esta imagen" : "Este anuncio"} cuesta{" "}
-            {total} créditos · te quedarán{" "}
+            Esta imagen cuesta{" "}
+            {IMAGE_COST} créditos · te quedarán{" "}
             <span className="text-(--color-muted)">{remaining}</span> ·{" "}
             <Link
               to="/app"

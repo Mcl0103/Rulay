@@ -8,7 +8,7 @@ export function Landing() {
         className="pointer-events-none absolute top-0 left-1/2 h-[600px] w-[900px] -translate-x-1/2 opacity-60"
         style={{
           background:
-            "radial-gradient(ellipse at center, rgba(139,92,246,0.35) 0%, rgba(139,92,246,0.08) 40%, transparent 70%)",
+            "radial-gradient(ellipse at center, rgba(59,130,246,0.35) 0%, rgba(148,163,184,0.10) 40%, transparent 70%)",
         }}
       />
 

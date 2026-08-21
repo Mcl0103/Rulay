@@ -97,14 +97,25 @@ function NavItem({
   return (
     <Link
       to={to}
-      className={`flex items-center gap-2.5 rounded-lg px-3 py-1.5 text-sm transition ${
+      className={`relative flex items-center gap-2.5 overflow-hidden rounded-lg px-3 py-1.5 text-sm transition ${
         active
-          ? "bg-(--color-panel-2) text-white"
+          ? "bg-gradient-to-r from-(--color-panel-2) via-(--color-panel-2) to-(--color-accent)/25 text-white"
           : "text-(--color-muted) hover:bg-(--color-panel-2)/60 hover:text-white"
       }`}
     >
       <Icon className="h-4 w-4" strokeWidth={1.75} />
       {label}
+      {active && (
+        <span
+          aria-hidden="true"
+          className="pointer-events-none absolute inset-y-0 right-0 w-1"
+          style={{
+            background: "var(--color-accent-2)",
+            boxShadow:
+              "0 0 10px 2px var(--color-accent), 0 0 22px 6px var(--color-accent)",
+          }}
+        />
+      )}
     </Link>
   )
 }
@@ -173,7 +184,7 @@ function CreditsCard() {
         </div>
         <div className="mb-3 h-1.5 w-full overflow-hidden rounded-full bg-black/40">
           <div
-            className="h-full rounded-full bg-gradient-to-r from-violet-500 to-fuchsia-500"
+            className="h-full rounded-full bg-gradient-to-r from-slate-300 to-blue-500"
             style={{ width: `${pct}%` }}
           />
         </div>
@@ -204,7 +215,7 @@ function ProfileCard() {
           className="h-8 w-8 shrink-0 rounded-full object-cover"
         />
       ) : (
-        <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-violet-500 to-fuchsia-500 text-xs font-medium text-white">
+        <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-slate-300 via-slate-400 to-blue-500 text-xs font-medium text-white">
           {name.charAt(0).toUpperCase()}
         </div>
       )}

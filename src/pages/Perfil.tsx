@@ -88,7 +88,7 @@ export function Perfil() {
                 <button
                   onClick={() => fileInputRef.current?.click()}
                   disabled={uploading}
-                  className="relative flex h-16 w-16 items-center justify-center overflow-hidden rounded-full bg-gradient-to-br from-violet-500 to-fuchsia-500 text-lg font-medium text-white"
+                  className="relative flex h-16 w-16 items-center justify-center overflow-hidden rounded-full bg-gradient-to-br from-slate-300 via-slate-400 to-blue-500 text-lg font-medium text-white"
                 >
                   {avatarUrl ? (
                     <img
