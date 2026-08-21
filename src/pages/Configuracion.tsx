@@ -19,7 +19,7 @@ import {
 import { Sidebar } from "../components/Sidebar"
 import { StaggerHeader } from "../components/StaggerHeader"
 import { useAuth } from "../lib/auth"
-import { useTheme } from "../lib/theme"
+import { useTheme, type Theme } from "../lib/theme"
 import { useLanguage, type Lang } from "../lib/i18n"
 
 const countryCurrency: Record<string, string> = {
@@ -67,7 +67,14 @@ export function Configuracion() {
   const [watermarkImg, setWatermarkImg] = useState<string | null>(null)
   const watermarkInputRef = useRef<HTMLInputElement>(null)
 
+  // Tema e idioma de interfaz solo se aplican al pulsar "Guardar cambios",
+  // no en cuanto se hace clic — así el usuario no queda con un cambio a
+  // medias si navega a otra página antes de guardar.
+  const [pendingTheme, setPendingTheme] = useState<Theme>(theme)
+  const [pendingLang, setPendingLang] = useState<Lang>(lang)
+
   const [saved, setSaved] = useState(false)
+  const hasUnsavedAppearance = pendingTheme !== theme || pendingLang !== lang
 
   useEffect(() => {
     setPais(localStorage.getItem("rulay_pais") ?? "")
@@ -105,6 +112,8 @@ export function Configuracion() {
     localStorage.setItem("rulay_auto_recarga_paquete", autoRecargaPaquete)
     localStorage.setItem("rulay_watermark_on", String(watermarkOn))
     if (watermarkImg) localStorage.setItem("rulay_watermark_img", watermarkImg)
+    if (pendingTheme !== theme) setTheme(pendingTheme)
+    if (pendingLang !== lang) setLang(pendingLang)
     setSaved(true)
     setTimeout(() => setSaved(false), 1800)
   }
@@ -160,9 +169,9 @@ export function Configuracion() {
             <p className="mt-1 text-xs text-(--color-muted-2)">{t("config.apparienciaDesc")}</p>
             <div className="mt-3 flex gap-2">
               <button
-                onClick={() => setTheme("dark")}
+                onClick={() => setPendingTheme("dark")}
                 className={`flex items-center gap-1.5 rounded-full border px-3 py-1.5 text-xs transition ${
-                  theme === "dark"
+                  pendingTheme === "dark"
                     ? "border-(--color-accent) bg-(--color-accent)/15 text-(--color-text)"
                     : "border-(--color-border) text-(--color-muted) hover:border-(--color-border-hover) hover:text-(--color-text)"
                 }`}
@@ -171,9 +180,9 @@ export function Configuracion() {
                 {t("config.oscuro")}
               </button>
               <button
-                onClick={() => setTheme("light")}
+                onClick={() => setPendingTheme("light")}
                 className={`flex items-center gap-1.5 rounded-full border px-3 py-1.5 text-xs transition ${
-                  theme === "light"
+                  pendingTheme === "light"
                     ? "border-(--color-accent) bg-(--color-accent)/15 text-(--color-text)"
                     : "border-(--color-border) text-(--color-muted) hover:border-(--color-border-hover) hover:text-(--color-text)"
                 }`}
@@ -387,8 +396,8 @@ export function Configuracion() {
             </div>
             <p className="mt-1 text-xs text-(--color-muted-2)">{t("config.idiomaInterfazDesc")}</p>
             <select
-              value={lang}
-              onChange={(e) => setLang(e.target.value as Lang)}
+              value={pendingLang}
+              onChange={(e) => setPendingLang(e.target.value as Lang)}
               className="mt-3 w-full rounded-xl border border-(--color-border) bg-(--color-panel-2) px-4 py-2.5 text-[15px] text-(--color-text) focus:border-(--color-border-hover) focus:outline-none"
             >
               <option value="es">Español</option>
@@ -415,12 +424,17 @@ export function Configuracion() {
             </Link>
           </div>
 
-          <button
-            onClick={handleSave}
-            className="mt-6 rounded-full bg-(--color-primary) px-5 py-2 text-sm font-medium text-(--color-on-primary) transition hover:opacity-90"
-          >
-            {saved ? `${t("config.guardado")} ✓` : t("config.guardarCambios")}
-          </button>
+          <div className="mt-6 flex items-center gap-3">
+            <button
+              onClick={handleSave}
+              className="rounded-full bg-(--color-primary) px-5 py-2 text-sm font-medium text-(--color-on-primary) transition hover:opacity-90"
+            >
+              {saved ? `${t("config.guardado")} ✓` : t("config.guardarCambios")}
+            </button>
+            {hasUnsavedAppearance && !saved && (
+              <span className="text-xs text-(--color-muted-2)">{t("config.cambiosSinGuardar")}</span>
+            )}
+          </div>
 
           {/* Privacidad */}
           <div className="mt-10 border-t border-(--color-border) pt-6">

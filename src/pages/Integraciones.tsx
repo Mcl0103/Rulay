@@ -68,7 +68,7 @@ export function Integraciones() {
               style={{ background: "#95BF47" }}
             />
 
-            <div className="relative flex items-start justify-between gap-4">
+            <div className="relative flex items-center justify-between gap-4">
               <div className="flex items-start gap-4">
                 <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-white/5 p-2">
                   <img src={shopifyLogo} alt="Shopify" className="h-full w-full object-contain" />
@@ -83,7 +83,7 @@ export function Integraciones() {
                       </span>
                     )}
                   </div>
-                  <p className="mt-1 max-w-md text-sm text-(--color-muted)">
+                  <p className="mt-1 max-w-md text-sm text-white/60">
                     Publica tus páginas generadas directo a tu tienda en un
                     clic, sin exportar ni copiar código.
                   </p>
@@ -93,7 +93,7 @@ export function Integraciones() {
               {domain ? (
                 <button
                   onClick={handleDisconnect}
-                  className="shrink-0 rounded-full border border-white/15 px-4 py-1.5 text-xs font-medium text-(--color-muted) transition hover:border-white/30 hover:text-white"
+                  className="shrink-0 rounded-full border border-white/15 px-4 py-1.5 text-xs font-medium text-white/70 transition hover:border-white/30 hover:text-white"
                 >
                   {t("integraciones.desconectar")}
                 </button>
@@ -117,10 +117,10 @@ export function Integraciones() {
             {domain && (
               <div className="relative mt-5 flex items-center gap-3 rounded-xl border border-white/10 bg-white/5 px-4 py-3">
                 <div className="h-2 w-2 shrink-0 rounded-full bg-emerald-400" />
-                <p className="flex-1 text-xs text-(--color-muted)">{domain}</p>
+                <p className="flex-1 text-xs text-white/60">{domain}</p>
               </div>
             )}
-            <p className="relative mt-3 text-xs text-(--color-muted-2)">
+            <p className="relative mt-3 text-xs text-white/40">
               {t("integraciones.unaTiendaNota")}
             </p>
           </div>
@@ -134,15 +134,15 @@ export function Integraciones() {
                   key={name}
                   className="relative overflow-hidden rounded-2xl border border-dashed border-(--color-border) bg-(--color-panel) p-4"
                 >
-                  <div className="pointer-events-none blur-[3px]">
+                  <div className="pointer-events-none opacity-40">
                     <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-(--color-panel-2) text-(--color-muted)">
                       <Icon className="h-4 w-4" strokeWidth={1.75} />
                     </div>
                     <p className="mt-3 text-sm font-medium text-(--color-text)">{name}</p>
                     <p className="mt-1 text-xs text-(--color-muted-2)">{t(descKey)}</p>
                   </div>
-                  <div className="absolute inset-0 flex items-center justify-center bg-black/20">
-                    <span className="rounded-full border border-(--color-border) bg-(--color-panel) px-3 py-1 text-[11px] text-(--color-muted)">
+                  <div className="absolute inset-0 flex items-center justify-center">
+                    <span className="rounded-full border border-(--color-border) bg-(--color-panel) px-3 py-1 text-[11px] font-medium text-(--color-muted) shadow-sm">
                       {t("integraciones.proximamente")}
                     </span>
                   </div>

@@ -252,7 +252,7 @@ export function CreateLanding() {
                     {t("createLanding.iaEscribeNota")}
                   </p>
                 ) : (
-                  <BorderBeam size="md" colorVariant="mono" strength={0.92}>
+                  <BorderBeam size="md" colorVariant="mono" strength={0.92} theme={theme}>
                     <textarea
                       rows={3}
                       value={prompt}

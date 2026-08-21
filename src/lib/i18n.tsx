@@ -179,6 +179,7 @@ const dict = {
   "config.irAPerfil": { es: "Ir a Perfil", en: "Go to Profile" },
   "config.guardarCambios": { es: "Guardar cambios", en: "Save changes" },
   "config.guardado": { es: "Guardado", en: "Saved" },
+  "config.cambiosSinGuardar": { es: "Tienes cambios de apariencia sin guardar", en: "You have unsaved appearance changes" },
   "config.privacidad": { es: "Privacidad", en: "Privacy" },
   "config.exportarDatos": { es: "Exportar mis datos", en: "Export my data" },
   "config.borrarDatos": { es: "Borrar mis datos y cerrar cuenta", en: "Delete my data and close account" },

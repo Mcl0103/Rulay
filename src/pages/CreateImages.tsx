@@ -98,7 +98,7 @@ export function CreateImages() {
           </div>
           <StaggerHeader title={t("createImages.titulo")} className="mt-4" />
 
-          <BorderBeam size="md" colorVariant="mono" strength={0.92}>
+          <BorderBeam size="md" colorVariant="mono" strength={0.92} theme={theme}>
           <div className="relative mt-6 rounded-2xl border border-(--color-border) bg-(--color-panel) p-4 text-left transition focus-within:border-(--color-border-hover)">
             <textarea
               ref={textareaRef}
