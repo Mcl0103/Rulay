@@ -50,6 +50,17 @@ const countryCurrency: Record<string, string> = {
   "Estados Unidos": "USD",
   España: "EUR",
 }
+const countryLanguage: Record<string, string> = {
+  Colombia: "Español",
+  México: "Español",
+  Perú: "Español",
+  Chile: "Español",
+  Argentina: "Español",
+  Ecuador: "Español",
+  "Estados Unidos": "English",
+  España: "Español",
+}
+const languages = ["Español", "English"]
 const countries = Object.keys(countryCurrency)
 
 export function CreateLanding() {
@@ -70,7 +81,13 @@ export function CreateLanding() {
   const [publico, setPublico] = useState("")
   const [precio, setPrecio] = useState("")
   const [pais, setPais] = useState("")
+  const [idioma, setIdioma] = useState("")
   const divisa = countryCurrency[pais]
+
+  function handlePaisChange(value: string) {
+    setPais(value)
+    if (value) setIdioma(countryLanguage[value])
+  }
 
   const [selectedSections, setSelectedSections] = useState<SectionType[]>(["hero"])
   const isFullPage = selectedSections.length === sections.length
@@ -281,7 +298,7 @@ export function CreateLanding() {
                         </label>
                         <select
                           value={pais}
-                          onChange={(e) => setPais(e.target.value)}
+                          onChange={(e) => handlePaisChange(e.target.value)}
                           className="w-full rounded-lg border border-(--color-border) bg-(--color-panel-2) px-3 py-2 text-sm text-white focus:outline-none"
                         >
                           <option value="">Selecciona…</option>
@@ -293,7 +310,10 @@ export function CreateLanding() {
                         </select>
                         {divisa && (
                           <p className="mt-1 text-[11px] text-(--color-muted-2)">
-                            Divisa detectada: <span className="text-(--color-accent-2)">{divisa}</span>
+                            Divisa e idioma detectados:{" "}
+                            <span className="text-(--color-accent-2)">
+                              {divisa} · {idioma}
+                            </span>
                           </p>
                         )}
                       </div>
@@ -308,6 +328,26 @@ export function CreateLanding() {
                           className="w-full rounded-lg border border-(--color-border) bg-(--color-panel-2) px-3 py-2 text-sm text-white placeholder:text-(--color-muted-2) focus:outline-none"
                         />
                       </div>
+                    </div>
+                    <div>
+                      <label className="mb-1.5 block text-xs text-(--color-muted)">
+                        Idioma de salida
+                      </label>
+                      <select
+                        value={idioma}
+                        onChange={(e) => setIdioma(e.target.value)}
+                        className="w-full rounded-lg border border-(--color-border) bg-(--color-panel-2) px-3 py-2 text-sm text-white focus:outline-none"
+                      >
+                        <option value="">Selecciona…</option>
+                        {languages.map((l) => (
+                          <option key={l} value={l}>
+                            {l}
+                          </option>
+                        ))}
+                      </select>
+                      <p className="mt-1 text-[11px] text-(--color-muted-2)">
+                        Se precarga solo al elegir el país — puedes cambiarlo aparte si hace falta.
+                      </p>
                     </div>
                   </div>
                 )}

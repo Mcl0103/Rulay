@@ -1,17 +1,40 @@
 import { useEffect, useRef, useState } from "react"
 import { Link } from "react-router-dom"
-import { Plus, ArrowUp, Upload, MousePointerClick } from "lucide-react"
+import {
+  Plus,
+  ArrowUp,
+  Upload,
+  MousePointerClick,
+  FileText,
+  ImagePlus,
+  LayoutTemplate,
+} from "lucide-react"
 
-const quickActions = [
-  "Pegar link de AliExpress",
-  "Pegar link de Amazon",
-  "Empezar desde cero",
+type Mode = "pagina" | "imagen" | "landing"
+
+const modes: { id: Mode; label: string; icon: typeof FileText; to: string }[] = [
+  { id: "pagina", label: "Product Page", icon: FileText, to: "/app/generar" },
+  { id: "imagen", label: "Imagen", icon: ImagePlus, to: "/app/imagenes" },
+  { id: "landing", label: "Landing", icon: LayoutTemplate, to: "/app/landing" },
 ]
 
 export function PromptCard({ name = "Marlon" }: { name?: string }) {
   const [shown, setShown] = useState(false)
   const [attachOpen, setAttachOpen] = useState(false)
   const morphRef = useRef<HTMLDivElement>(null)
+
+  const [mode, setMode] = useState<Mode>("pagina")
+  const pillRef = useRef<HTMLSpanElement>(null)
+  const tabRefs = useRef<Record<Mode, HTMLButtonElement | null>>({
+    pagina: null,
+    imagen: null,
+    landing: null,
+  })
+  const firstTabRender = useRef(true)
+  const activeMode = modes.find((m) => m.id === mode)!
+  const welcomeMessage =
+    (typeof window !== "undefined" && localStorage.getItem("rulay_welcome_message")) ||
+    "¿Qué producto vamos a lanzar?"
 
   useEffect(() => {
     const raf = requestAnimationFrame(() => setShown(true))
@@ -29,6 +52,24 @@ export function PromptCard({ name = "Marlon" }: { name?: string }) {
     return () => document.removeEventListener("mousedown", handleClickOutside)
   }, [attachOpen])
 
+  useEffect(() => {
+    const pill = pillRef.current
+    const el = tabRefs.current[mode]
+    if (!pill || !el) return
+
+    if (firstTabRender.current) {
+      pill.style.transition = "none"
+      pill.style.transform = `translateX(${el.offsetLeft}px)`
+      pill.style.width = `${el.offsetWidth}px`
+      pill.getBoundingClientRect()
+      pill.style.transition = ""
+      firstTabRender.current = false
+    } else {
+      pill.style.transform = `translateX(${el.offsetLeft}px)`
+      pill.style.width = `${el.offsetWidth}px`
+    }
+  }, [mode])
+
   return (
     <div>
       <div className={`t-stagger ${shown ? "is-shown" : ""}`}>
@@ -36,14 +77,33 @@ export function PromptCard({ name = "Marlon" }: { name?: string }) {
           Hola, {name} 👋
         </p>
         <h1 className="t-stagger-line t-stagger-line--2 mt-1 text-3xl font-medium text-white sm:text-4xl">
-          ¿Qué producto vamos a lanzar?
+          {welcomeMessage}
         </h1>
       </div>
 
-      <div className="mt-6 rounded-2xl border border-(--color-border) bg-(--color-panel) p-4 transition focus-within:border-(--color-border-hover)">
+      <div role="tablist" className="t-tabs mt-6 border border-(--color-border)">
+        <span ref={pillRef} className="t-tabs-pill" aria-hidden="true" />
+        {modes.map((m) => (
+          <button
+            key={m.id}
+            ref={(el) => {
+              tabRefs.current[m.id] = el
+            }}
+            role="tab"
+            aria-selected={mode === m.id}
+            onClick={() => setMode(m.id)}
+            className="t-tab flex items-center gap-1.5 text-sm"
+          >
+            <m.icon className="h-3.5 w-3.5" />
+            {m.label}
+          </button>
+        ))}
+      </div>
+
+      <div className="mt-3 rounded-2xl border border-(--color-border) bg-(--color-panel) p-4 transition focus-within:border-(--color-border-hover)">
         <textarea
           rows={2}
-          placeholder="Pega el link de tu producto (AliExpress, Amazon, Shopify)…"
+          placeholder="Describe lo que quieres crear…"
           className="w-full resize-none bg-transparent text-[15px] text-white placeholder:text-(--color-muted-2) focus:outline-none"
         />
         <div className="mt-3 flex items-center justify-between">
@@ -80,24 +140,12 @@ export function PromptCard({ name = "Marlon" }: { name?: string }) {
             </div>
           </div>
           <Link
-            to="/app/generar"
+            to={activeMode.to}
             className="flex h-8 w-8 items-center justify-center rounded-full bg-white text-black transition hover:bg-white/90"
           >
             <ArrowUp className="h-4 w-4" />
           </Link>
         </div>
-      </div>
-
-      <div className="mt-3 flex flex-wrap gap-2">
-        {quickActions.map((action) => (
-          <Link
-            key={action}
-            to="/app/generar"
-            className="rounded-full border border-(--color-border) px-3 py-1.5 text-xs text-(--color-muted) transition hover:border-(--color-border-hover) hover:text-white"
-          >
-            {action}
-          </Link>
-        ))}
       </div>
     </div>
   )

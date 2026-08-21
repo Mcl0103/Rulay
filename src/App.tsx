@@ -10,6 +10,7 @@ import { CreateLanding } from "./pages/CreateLanding"
 import { Pages } from "./pages/Pages"
 import { Integraciones } from "./pages/Integraciones"
 import { Perfil } from "./pages/Perfil"
+import { Configuracion } from "./pages/Configuracion"
 
 function App() {
   return (
@@ -71,6 +72,14 @@ function App() {
             element={
               <RequireAuth>
                 <Perfil />
+              </RequireAuth>
+            }
+          />
+          <Route
+            path="/app/configuracion"
+            element={
+              <RequireAuth>
+                <Configuracion />
               </RequireAuth>
             }
           />

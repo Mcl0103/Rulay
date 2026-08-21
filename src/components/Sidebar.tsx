@@ -10,6 +10,7 @@ import {
   ChevronsUpDown,
   Sparkles,
   LayoutTemplate,
+  Settings,
 } from "lucide-react"
 import { Logo } from "./Logo"
 import { useAuth } from "../lib/auth"
@@ -26,6 +27,7 @@ const midItems = [{ icon: ImagePlus, label: "Imágenes IA", to: "/app/imagenes" 
 
 const bottomItems = [
   { icon: Plug, label: "Integraciones", to: "/app/integraciones" },
+  { icon: Settings, label: "Configuración", to: "/app/configuracion" },
 ]
 
 const supportItems = [
