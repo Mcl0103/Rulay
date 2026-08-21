@@ -1,4 +1,4 @@
-import { useRef, useState } from "react"
+import { useEffect, useRef, useState } from "react"
 import { Link } from "react-router-dom"
 import {
   ArrowLeft,
@@ -11,6 +11,7 @@ import {
   Layers,
   FolderOpen,
 } from "lucide-react"
+import { BorderBeam } from "border-beam"
 import { Sidebar } from "../components/Sidebar"
 
 type SectionType =
@@ -35,9 +36,19 @@ const sections: { id: SectionType; label: string }[] = [
 type ReferenceMode = "ninguna" | "galeria" | "subir"
 
 const SECTION_COST = 5
+const FULL_PAGE_COST = 30 // bundle: 7 secciones sueltas = 35cr, la página completa sale con descuento
 const BALANCE = 180
 
 export function CreateLanding() {
+  const [shown, setShown] = useState(false)
+  useEffect(() => {
+    const raf = requestAnimationFrame(() => setShown(true))
+    return () => cancelAnimationFrame(raf)
+  }, [])
+
+  const [photos, setPhotos] = useState<(string | null)[]>([null, null, null])
+  const fileInputRefs = [useRef<HTMLInputElement>(null), useRef<HTMLInputElement>(null), useRef<HTMLInputElement>(null)]
+
   const [anguloName, setAnguloName] = useState("")
   const [prompt, setPrompt] = useState("")
   const [advancedOpen, setAdvancedOpen] = useState(false)
@@ -45,16 +56,26 @@ export function CreateLanding() {
   const [precio, setPrecio] = useState("")
   const [pais, setPais] = useState("")
 
-  const [photos, setPhotos] = useState<(string | null)[]>([null, null, null])
-  const fileInputRefs = [useRef<HTMLInputElement>(null), useRef<HTMLInputElement>(null), useRef<HTMLInputElement>(null)]
+  const [selectedSections, setSelectedSections] = useState<SectionType[]>(["hero"])
+  const isFullPage = selectedSections.length === sections.length
 
-  const [section, setSection] = useState<SectionType>("hero")
   const [referenceMode, setReferenceMode] = useState<ReferenceMode>("ninguna")
   const referenceFileRef = useRef<HTMLInputElement>(null)
   const [referenceImage, setReferenceImage] = useState<string | null>(null)
 
-  const total = SECTION_COST
+  const total = isFullPage ? FULL_PAGE_COST : selectedSections.length * SECTION_COST
   const remaining = BALANCE - total
+  const hasPhoto = photos.some((p) => p)
+
+  function toggleSection(id: SectionType) {
+    setSelectedSections((prev) =>
+      prev.includes(id) ? prev.filter((s) => s !== id) : [...prev, id],
+    )
+  }
+
+  function toggleFullPage() {
+    setSelectedSections(isFullPage ? ["hero"] : sections.map((s) => s.id))
+  }
 
   function handlePhotoChange(index: number, e: React.ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0]
@@ -85,13 +106,66 @@ export function CreateLanding() {
         </Link>
 
         <div className="mx-auto w-full max-w-3xl py-10">
-          <h1 className="text-2xl font-medium text-white">Landing con Imágenes</h1>
-          <p className="mt-1 text-sm text-(--color-muted)">
-            Genera secciones de landing listas para pegar en tu página de Shopify.
-          </p>
+          <div className={`t-stagger ${shown ? "is-shown" : ""}`}>
+            <h1 className="t-stagger-line t-stagger-line--1 text-2xl font-medium text-white">
+              Landing con Imágenes
+            </h1>
+            <p className="t-stagger-line t-stagger-line--2 mt-1 text-sm text-(--color-muted)">
+              Genera secciones de landing listas para pegar en tu página de Shopify.
+            </p>
+          </div>
 
           <div className="mt-8 grid grid-cols-1 gap-6 lg:grid-cols-[1fr_280px]">
             <div className="flex flex-col gap-6">
+              {/* Fotos del producto — primero, la IA los necesita antes que nada */}
+              <div>
+                <label className="mb-2 block text-sm text-(--color-muted)">
+                  Fotos del producto <span className="text-(--color-muted-2)">· 1 a 3, obligatorio</span>
+                </label>
+                <div className="grid grid-cols-3 gap-2">
+                  {photos.map((photo, i) => (
+                    <div key={i}>
+                      <input
+                        ref={fileInputRefs[i]}
+                        type="file"
+                        accept="image/*"
+                        onChange={(e) => handlePhotoChange(i, e)}
+                        className="hidden"
+                      />
+                      {photo ? (
+                        <div className="relative">
+                          <img
+                            src={photo}
+                            alt={`Imagen ${i + 1}`}
+                            className="aspect-square w-full rounded-xl object-cover"
+                          />
+                          <button
+                            onClick={() =>
+                              setPhotos((prev) => {
+                                const next = [...prev]
+                                next[i] = null
+                                return next
+                              })
+                            }
+                            className="absolute top-1.5 right-1.5 flex h-6 w-6 items-center justify-center rounded-full bg-black/60 text-white transition hover:bg-black/80"
+                          >
+                            <X className="h-3.5 w-3.5" />
+                          </button>
+                        </div>
+                      ) : (
+                        <button
+                          onClick={() => fileInputRefs[i].current?.click()}
+                          className="flex aspect-square w-full flex-col items-center justify-center gap-1 rounded-xl border border-dashed border-(--color-border) bg-(--color-panel) text-(--color-muted) transition hover:border-(--color-border-hover) hover:text-white"
+                        >
+                          <Upload className="h-4 w-4" />
+                          <span className="text-xs">Imagen {i + 1}</span>
+                        </button>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              </div>
+
               {/* Ángulo de venta */}
               <div>
                 <label className="mb-2 block text-sm text-(--color-muted)">
@@ -112,13 +186,15 @@ export function CreateLanding() {
                 <label className="mb-2 block text-sm text-(--color-muted)">
                   Describe tu producto y el ángulo de venta
                 </label>
-                <textarea
-                  rows={3}
-                  value={prompt}
-                  onChange={(e) => setPrompt(e.target.value)}
-                  placeholder="Ej. Suplemento de colágeno para mujeres de 35+ que quieren piel más firme sin procedimientos caros…"
-                  className="w-full resize-none rounded-xl border border-(--color-border) bg-(--color-panel) px-4 py-3 text-[15px] text-white placeholder:text-(--color-muted-2) transition focus:border-(--color-border-hover) focus:outline-none"
-                />
+                <BorderBeam size="md" colorVariant="mono" strength={0.92}>
+                  <textarea
+                    rows={3}
+                    value={prompt}
+                    onChange={(e) => setPrompt(e.target.value)}
+                    placeholder="Ej. Suplemento de colágeno para mujeres de 35+ que quieren piel más firme sin procedimientos caros…"
+                    className="w-full resize-none rounded-xl border border-(--color-border) bg-(--color-panel) px-4 py-3 text-[15px] text-white placeholder:text-(--color-muted-2) transition focus:border-(--color-border-hover) focus:outline-none"
+                  />
+                </BorderBeam>
 
                 <button
                   type="button"
@@ -172,78 +248,62 @@ export function CreateLanding() {
                 )}
               </div>
 
-              {/* Fotos del producto */}
+              {/* Secciones a generar — multi-selección + página completa */}
               <div>
-                <label className="mb-2 block text-sm text-(--color-muted)">
-                  Fotos del producto <span className="text-(--color-muted-2)">· 1 a 3</span>
-                </label>
-                <div className="grid grid-cols-3 gap-2">
-                  {photos.map((photo, i) => (
-                    <div key={i}>
-                      <input
-                        ref={fileInputRefs[i]}
-                        type="file"
-                        accept="image/*"
-                        onChange={(e) => handlePhotoChange(i, e)}
-                        className="hidden"
-                      />
-                      {photo ? (
-                        <div className="relative">
-                          <img
-                            src={photo}
-                            alt={`Imagen ${i + 1}`}
-                            className="aspect-square w-full rounded-xl object-cover"
-                          />
-                          <button
-                            onClick={() =>
-                              setPhotos((prev) => {
-                                const next = [...prev]
-                                next[i] = null
-                                return next
-                              })
-                            }
-                            className="absolute top-1.5 right-1.5 flex h-6 w-6 items-center justify-center rounded-full bg-black/60 text-white transition hover:bg-black/80"
-                          >
-                            <X className="h-3.5 w-3.5" />
-                          </button>
-                        </div>
-                      ) : (
-                        <button
-                          onClick={() => fileInputRefs[i].current?.click()}
-                          className="flex aspect-square w-full flex-col items-center justify-center gap-1 rounded-xl border border-dashed border-(--color-border) bg-(--color-panel) text-(--color-muted) transition hover:border-(--color-border-hover) hover:text-white"
-                        >
-                          <Upload className="h-4 w-4" />
-                          <span className="text-xs">Imagen {i + 1}</span>
-                        </button>
-                      )}
-                    </div>
-                  ))}
-                </div>
-              </div>
-
-              {/* Sección a generar */}
-              <div>
-                <label className="mb-2 block text-sm text-(--color-muted)">
-                  Sección a generar
-                </label>
-                <div className="flex flex-wrap gap-2">
-                  {sections.map((s) => (
-                    <button
-                      key={s.id}
-                      onClick={() => setSection(s.id)}
-                      className={`rounded-full border px-3 py-1.5 text-xs transition ${
-                        section === s.id
-                          ? "border-(--color-accent) bg-(--color-accent)/15 text-white"
-                          : "border-(--color-border) text-(--color-muted) hover:border-(--color-border-hover) hover:text-white"
+                <div className="mb-2 flex items-center justify-between">
+                  <label className="text-sm text-(--color-muted)">
+                    Secciones a generar <span className="text-(--color-muted-2)">· elige una o varias</span>
+                  </label>
+                  <button
+                    type="button"
+                    onClick={toggleFullPage}
+                    className={`flex items-center gap-2 rounded-full border px-3 py-1.5 text-xs transition ${
+                      isFullPage
+                        ? "border-(--color-accent) bg-(--color-accent)/15 text-white"
+                        : "border-(--color-border) text-(--color-muted) hover:border-(--color-border-hover) hover:text-white"
+                    }`}
+                  >
+                    Página completa
+                    <span
+                      role="switch"
+                      aria-checked={isFullPage}
+                      data-on={isFullPage}
+                      className={`t-toggle t-toggle--sm is-init relative inline-flex h-4 w-[26px] shrink-0 items-center rounded-full transition-colors ${
+                        isFullPage ? "bg-(--color-accent)" : "bg-white/15"
                       }`}
                     >
-                      {s.label}
-                    </button>
-                  ))}
+                      <span className="t-toggle-thumb ml-0.5 block h-3 w-3 rounded-full bg-white" />
+                    </span>
+                  </button>
                 </div>
-                {section === "oferta" && (
+
+                <div className="flex flex-wrap gap-2">
+                  {sections.map((s) => {
+                    const active = selectedSections.includes(s.id)
+                    return (
+                      <button
+                        key={s.id}
+                        onClick={() => toggleSection(s.id)}
+                        className={`rounded-full border px-3 py-1.5 text-xs transition ${
+                          active
+                            ? "border-(--color-accent) bg-(--color-accent)/15 text-white"
+                            : "border-(--color-border) text-(--color-muted) hover:border-(--color-border-hover) hover:text-white"
+                        }`}
+                      >
+                        {s.label}
+                      </button>
+                    )
+                  })}
+                </div>
+                {!selectedSections.includes("oferta") && (
                   <p className="mt-2 text-xs text-(--color-muted-2)">
-                    Si no generas esta sección, tu página igual muestra el bloque real de precios/cantidad de tu tienda.
+                    Sin la sección Oferta, tu página igual muestra el bloque real de precios/cantidad de tu tienda.
+                  </p>
+                )}
+                {isFullPage && (
+                  <p className="mt-2 text-xs text-(--color-accent-2)">
+                    Página completa: {FULL_PAGE_COST} créditos en vez de {sections.length * SECTION_COST} — ahorras{" "}
+                    {sections.length * SECTION_COST - FULL_PAGE_COST} créditos generando todo junto.
                   </p>
                 )}
               </div>
@@ -343,11 +403,13 @@ export function CreateLanding() {
               </div>
 
               <button
-                disabled={!prompt || photos.every((p) => !p)}
+                disabled={!hasPhoto || !prompt || selectedSections.length === 0}
                 className="flex w-fit items-center gap-2 rounded-full bg-white px-5 py-2.5 text-sm font-medium text-black transition hover:bg-white/90 disabled:cursor-not-allowed disabled:opacity-40"
               >
                 <ImageIcon className="h-4 w-4" />
-                Generar sección
+                {isFullPage
+                  ? "Generar página completa"
+                  : `Generar ${selectedSections.length > 1 ? `${selectedSections.length} secciones` : "sección"}`}
               </button>
             </div>
 
@@ -355,10 +417,19 @@ export function CreateLanding() {
             <aside className="h-fit rounded-2xl border border-(--color-border) bg-(--color-panel) p-4">
               <p className="text-sm font-medium text-white">Costo estimado</p>
               <div className="mt-3 flex flex-col gap-2 text-sm">
-                <div className="flex justify-between text-(--color-muted)">
-                  <span>Sección ({sections.find((s) => s.id === section)?.label})</span>
-                  <span>{SECTION_COST} créditos</span>
-                </div>
+                {isFullPage ? (
+                  <div className="flex justify-between text-(--color-muted)">
+                    <span>Página completa (7 secciones)</span>
+                    <span>{FULL_PAGE_COST} créditos</span>
+                  </div>
+                ) : (
+                  selectedSections.map((id) => (
+                    <div key={id} className="flex justify-between text-(--color-muted)">
+                      <span>{sections.find((s) => s.id === id)?.label}</span>
+                      <span>{SECTION_COST} créditos</span>
+                    </div>
+                  ))
+                )}
                 <div className="mt-1 flex justify-between border-t border-(--color-border) pt-2 font-medium text-white">
                   <span>Total</span>
                   <span>{total} créditos</span>
