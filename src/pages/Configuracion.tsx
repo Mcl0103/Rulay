@@ -23,6 +23,7 @@ import { useAuth } from "../lib/auth"
 import { useTheme, type Theme } from "../lib/theme"
 import { useLanguage, type Lang } from "../lib/i18n"
 import { GuardedLink, useUnsavedGuard } from "../lib/unsavedGuard"
+import { supabase } from "../lib/supabase"
 
 const countryCurrency: Record<string, string> = {
   Colombia: "COP",
@@ -49,7 +50,7 @@ const packages = ["Starter", "Growth", "Pro"]
 
 export function Configuracion() {
   const navigate = useNavigate()
-  const { signOut } = useAuth()
+  const { signOut, user } = useAuth()
   const { theme, setTheme } = useTheme()
   const { lang, setLang, t } = useLanguage()
 
@@ -140,6 +141,14 @@ export function Configuracion() {
   }
 
   function handleSave() {
+    if (user) {
+      supabase
+        .from("user_preferences")
+        .upsert({ user_id: user.id, pais: pais || null }, { onConflict: "user_id" })
+        .then(({ error }) => {
+          if (error) console.error("No se pudo guardar el país en Supabase:", error.message)
+        })
+    }
     localStorage.setItem("rulay_pais", pais)
     localStorage.setItem("rulay_idioma", idioma)
     localStorage.setItem("rulay_moneda", divisa ?? "")

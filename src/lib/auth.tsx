@@ -1,6 +1,7 @@
-import { createContext, useContext, useEffect, useState, type ReactNode } from "react"
+import { createContext, useContext, useEffect, useRef, useState, type ReactNode } from "react"
 import type { Session, User } from "@supabase/supabase-js"
 import { supabase } from "./supabase"
+import { autoDetectCountryIfMissing } from "./countryAutoDetect"
 
 type AuthContextValue = {
   session: Session | null
@@ -16,6 +17,7 @@ const AuthContext = createContext<AuthContextValue | null>(null)
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [session, setSession] = useState<Session | null>(null)
   const [loading, setLoading] = useState(true)
+  const countryCheckedRef = useRef(false)
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data }) => {
@@ -29,6 +31,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
     return () => listener.subscription.unsubscribe()
   }, [])
+
+  useEffect(() => {
+    if (session?.access_token && !countryCheckedRef.current) {
+      countryCheckedRef.current = true
+      autoDetectCountryIfMissing(session.access_token)
+    }
+  }, [session])
 
   async function signInWithGoogle() {
     await supabase.auth.signInWithOAuth({

@@ -20,6 +20,7 @@ const Pages = lazy(() => import("./pages/Pages").then((m) => ({ default: m.Pages
 const Integraciones = lazy(() => import("./pages/Integraciones").then((m) => ({ default: m.Integraciones })))
 const Perfil = lazy(() => import("./pages/Perfil").then((m) => ({ default: m.Perfil })))
 const Configuracion = lazy(() => import("./pages/Configuracion").then((m) => ({ default: m.Configuracion })))
+const Admin = lazy(() => import("./pages/Admin").then((m) => ({ default: m.Admin })))
 
 function RouteFallback() {
   return <Loader show />
@@ -108,6 +109,7 @@ function App() {
               </RequireAuth>
             }
           />
+          <Route path="/admin" element={<Admin />} />
         </Routes>
         </Suspense>
       </UnsavedGuardProvider>
