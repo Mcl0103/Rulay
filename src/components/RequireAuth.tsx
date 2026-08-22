@@ -28,7 +28,7 @@ export function RequireAuth({ children }: { children: React.ReactNode }) {
         <GuardedLink
           to="/app/ayuda"
           title={t("sidebar.centroAyuda")}
-          className="fixed right-6 bottom-6 z-50 flex h-11 w-11 items-center justify-center rounded-full bg-(--color-panel-2) text-(--color-muted) shadow-[0_8px_20px_-6px_rgba(0,0,0,0.6)] transition hover:text-white"
+          className="fixed right-4 bottom-24 z-50 flex h-11 w-11 items-center justify-center rounded-full bg-(--color-panel-2) text-(--color-muted) shadow-[0_8px_20px_-6px_rgba(0,0,0,0.6)] transition hover:text-white md:right-6 md:bottom-6"
         >
           <CircleHelp className="h-5 w-5" />
         </GuardedLink>

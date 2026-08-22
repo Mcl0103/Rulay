@@ -2,6 +2,7 @@ import { useEffect, useState } from "react"
 import { ArrowLeft, MessageCircle, Sheet, Zap, Check } from "lucide-react"
 import { Link } from "react-router-dom"
 import { Sidebar } from "../components/Sidebar"
+import { MobileNav } from "../components/MobileNav"
 import { StaggerHeader } from "../components/StaggerHeader"
 import shopifyLogo from "../assets/shopify-logo-white-bg.webp"
 import { useTheme } from "../lib/theme"
@@ -46,7 +47,8 @@ export function Integraciones() {
   return (
     <div className="flex h-screen bg-(--color-base)">
       <Sidebar />
-      <main data-theme={theme} className="flex-1 overflow-y-auto bg-(--color-panel)/40 p-6">
+      <MobileNav />
+      <main data-theme={theme} className="flex-1 overflow-y-auto bg-(--color-panel)/40 p-4 pb-24 md:p-6">
         <Link
           to="/app"
           className="inline-flex items-center gap-2 text-sm text-(--color-muted) transition hover:text-(--color-text)"
@@ -68,7 +70,7 @@ export function Integraciones() {
               style={{ background: "#95BF47" }}
             />
 
-            <div className="relative flex items-center justify-between gap-4">
+            <div className="relative flex flex-col items-start gap-4 md:flex-row md:items-center md:justify-between">
               <div className="flex items-start gap-4">
                 <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-white/5 p-2">
                   <img src={shopifyLogo} alt="Shopify" className="h-full w-full object-contain" />
@@ -93,7 +95,7 @@ export function Integraciones() {
               {domain ? (
                 <button
                   onClick={handleDisconnect}
-                  className="shrink-0 rounded-full border border-white/15 px-4 py-1.5 text-xs font-medium text-white/70 transition hover:border-white/30 hover:text-white"
+                  className="w-full shrink-0 rounded-full border border-white/15 px-4 py-1.5 text-center text-xs font-medium text-white/70 transition hover:border-white/30 hover:text-white md:w-auto"
                 >
                   {t("integraciones.desconectar")}
                 </button>
@@ -101,7 +103,7 @@ export function Integraciones() {
                 <button
                   onClick={handleConnect}
                   disabled={connecting}
-                  className="shrink-0 rounded-full bg-white px-4 py-1.5 text-xs font-medium text-black transition hover:bg-white/90 disabled:cursor-not-allowed disabled:opacity-60"
+                  className="w-full shrink-0 rounded-full bg-white px-4 py-1.5 text-center text-xs font-medium text-black transition hover:bg-white/90 disabled:cursor-not-allowed disabled:opacity-60 md:w-auto"
                 >
                   {connecting ? (
                     <span className="t-shimmer t-shimmer--on-light" data-text={t("integraciones.conectando")}>

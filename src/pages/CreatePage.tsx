@@ -2,6 +2,7 @@ import { useRef, useState } from "react"
 import { Link } from "react-router-dom"
 import { ArrowLeft, Link2, Image as ImageIcon, Sparkles, Upload, X } from "lucide-react"
 import { Sidebar } from "../components/Sidebar"
+import { MobileNav } from "../components/MobileNav"
 import { StaggerHeader } from "../components/StaggerHeader"
 import { useTheme } from "../lib/theme"
 import { useLanguage } from "../lib/i18n"
@@ -32,7 +33,8 @@ export function CreatePage() {
   return (
     <div className="flex h-screen bg-(--color-base)">
       <Sidebar />
-      <main data-theme={theme} className="flex flex-1 flex-col overflow-y-auto bg-(--color-panel)/40 p-6">
+      <MobileNav />
+      <main data-theme={theme} className="flex flex-1 flex-col overflow-y-auto bg-(--color-panel)/40 p-4 pb-24 md:p-6">
         <Link
           to="/app"
           className="inline-flex items-center gap-2 text-sm text-(--color-muted) transition hover:text-(--color-text)"

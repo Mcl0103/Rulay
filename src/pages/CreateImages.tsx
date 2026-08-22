@@ -1,4 +1,4 @@
-import { useState, useRef } from "react"
+import { useState, useRef, type CSSProperties } from "react"
 import { Link } from "react-router-dom"
 import {
   ArrowLeft,
@@ -12,6 +12,7 @@ import {
   Wand2,
 } from "lucide-react"
 import { Sidebar } from "../components/Sidebar"
+import { MobileNav } from "../components/MobileNav"
 import { StaggerHeader } from "../components/StaggerHeader"
 import { BorderBeam } from "border-beam"
 import sparkleIcon from "../assets/sparkle-icon.webp"
@@ -75,7 +76,8 @@ export function CreateImages() {
   return (
     <div className="flex h-screen bg-(--color-base)">
       <Sidebar />
-      <main data-theme={theme} className="flex flex-1 flex-col overflow-y-auto bg-(--color-panel)/40 p-6">
+      <MobileNav />
+      <main data-theme={theme} className="flex flex-1 flex-col overflow-y-auto bg-(--color-panel)/40 p-4 pb-24 md:p-6">
         <Link
           to="/app"
           className="inline-flex items-center gap-2 text-sm text-(--color-muted) transition hover:text-(--color-text)"
@@ -84,7 +86,7 @@ export function CreateImages() {
           {t("sidebar.dashboard")}
         </Link>
 
-        <div className="mx-auto flex w-full max-w-2xl flex-1 flex-col justify-center py-10 text-center">
+        <div className="mx-auto mt-10 flex w-full max-w-2xl flex-1 flex-col justify-center py-10 text-center md:mt-0">
           <div className="mx-auto flex h-14 w-14 items-center justify-center">
             <img
               src={sparkleIcon}
@@ -110,23 +112,25 @@ export function CreateImages() {
               className="w-full resize-none bg-transparent text-[15px] text-(--color-text) placeholder:text-(--color-muted-2) focus:outline-none"
             />
 
-            {mentionOpen && (
-              <div className="absolute top-11 left-4 z-20 flex w-48 flex-col gap-0.5 rounded-xl border border-(--color-border) bg-(--color-panel-2) p-1.5 shadow-xl">
-                {mentions.map((m) => (
-                  <button
-                    key={m.tag}
-                    onMouseDown={(e) => e.preventDefault()}
-                    onClick={() => insertMention(m.tag)}
-                    className="rounded-lg px-2.5 py-1.5 text-left transition hover:bg-black/30"
-                  >
-                    <p className="text-sm text-(--color-text)">{m.label}</p>
-                    <p className="text-xs text-(--color-muted-2)">
-                      @{m.tag}
-                    </p>
-                  </button>
-                ))}
-              </div>
-            )}
+            <div
+              data-open={mentionOpen}
+              style={{ "--panel-translate-y": "-8px", "--panel-open-dur": "180ms", "--panel-close-dur": "140ms" } as CSSProperties}
+              className="t-panel-slide absolute top-11 left-4 z-20 flex w-48 flex-col gap-0.5 rounded-xl border border-(--color-border) bg-(--color-panel-2) p-1.5 shadow-xl"
+            >
+              {mentions.map((m) => (
+                <button
+                  key={m.tag}
+                  onMouseDown={(e) => e.preventDefault()}
+                  onClick={() => insertMention(m.tag)}
+                  className="rounded-lg px-2.5 py-1.5 text-left transition hover:bg-black/30"
+                >
+                  <p className="text-sm text-(--color-text)">{m.label}</p>
+                  <p className="text-xs text-(--color-muted-2)">
+                    @{m.tag}
+                  </p>
+                </button>
+              ))}
+            </div>
 
             <div className="mt-3 flex flex-wrap items-center gap-2 border-t border-(--color-border) pt-3">
               <div className="relative">
@@ -144,30 +148,32 @@ export function CreateImages() {
                   {productSource ?? t("createImages.producto")}
                   <ChevronDown className="h-3 w-3" />
                 </button>
-                {openMenu === "producto" && (
-                  <div className="absolute bottom-full left-0 z-10 mb-2 flex w-44 flex-col gap-0.5 rounded-xl border border-(--color-border) bg-(--color-panel-2) p-1 shadow-xl">
-                    <button
-                      onClick={() => {
-                        setProductSource("Imagen subida")
-                        setOpenMenu(null)
-                      }}
-                      className="flex items-center gap-2 rounded-lg px-2.5 py-1.5 text-left text-xs text-(--color-muted) transition hover:bg-black/30 hover:text-(--color-text)"
-                    >
-                      <Upload className="h-3.5 w-3.5" />
-                      {t("dashboard.subirImagen")}
-                    </button>
-                    <button
-                      onClick={() => {
-                        setProductSource("Producto seleccionado")
-                        setOpenMenu(null)
-                      }}
-                      className="flex items-center gap-2 rounded-lg px-2.5 py-1.5 text-left text-xs text-(--color-muted) transition hover:bg-black/30 hover:text-(--color-text)"
-                    >
-                      <MousePointerClick className="h-3.5 w-3.5" />
-                      {t("dashboard.seleccionarProducto")}
-                    </button>
-                  </div>
-                )}
+                <div
+                  data-open={openMenu === "producto"}
+                  style={{ "--panel-translate-y": "8px", "--panel-open-dur": "180ms", "--panel-close-dur": "140ms" } as CSSProperties}
+                  className="t-panel-slide absolute bottom-full left-0 z-10 mb-2 flex w-44 flex-col gap-0.5 rounded-xl border border-(--color-border) bg-(--color-panel-2) p-1 shadow-xl"
+                >
+                  <button
+                    onClick={() => {
+                      setProductSource("Imagen subida")
+                      setOpenMenu(null)
+                    }}
+                    className="flex items-center gap-2 rounded-lg px-2.5 py-1.5 text-left text-xs text-(--color-muted) transition hover:bg-black/30 hover:text-(--color-text)"
+                  >
+                    <Upload className="h-3.5 w-3.5" />
+                    {t("dashboard.subirImagen")}
+                  </button>
+                  <button
+                    onClick={() => {
+                      setProductSource("Producto seleccionado")
+                      setOpenMenu(null)
+                    }}
+                    className="flex items-center gap-2 rounded-lg px-2.5 py-1.5 text-left text-xs text-(--color-muted) transition hover:bg-black/30 hover:text-(--color-text)"
+                  >
+                    <MousePointerClick className="h-3.5 w-3.5" />
+                    {t("dashboard.seleccionarProducto")}
+                  </button>
+                </div>
               </div>
 
               <button
@@ -278,23 +284,25 @@ function Dropdown({
         {value}
         <ChevronDown className="h-3 w-3" />
       </button>
-      {isOpen && (
-        <div className="absolute bottom-full left-0 z-10 mb-2 flex w-44 flex-col gap-0.5 rounded-xl border border-(--color-border) bg-(--color-panel-2) p-1 shadow-xl">
-          {options.map((o) => (
-            <button
-              key={o}
-              onClick={() => onSelect(o)}
-              className={`rounded-lg px-2.5 py-1.5 text-left text-xs transition ${
-                value === o
-                  ? "bg-(--color-accent)/15 text-(--color-accent-2)"
-                  : "text-(--color-muted) hover:bg-black/30 hover:text-(--color-text)"
-              }`}
-            >
-              {o}
-            </button>
-          ))}
-        </div>
-      )}
+      <div
+        data-open={isOpen}
+        style={{ "--panel-translate-y": "8px", "--panel-open-dur": "180ms", "--panel-close-dur": "140ms" } as CSSProperties}
+        className="t-panel-slide absolute bottom-full left-0 z-10 mb-2 flex w-44 flex-col gap-0.5 rounded-xl border border-(--color-border) bg-(--color-panel-2) p-1 shadow-xl"
+      >
+        {options.map((o) => (
+          <button
+            key={o}
+            onClick={() => onSelect(o)}
+            className={`rounded-lg px-2.5 py-1.5 text-left text-xs transition ${
+              value === o
+                ? "bg-(--color-accent)/15 text-(--color-accent-2)"
+                : "text-(--color-muted) hover:bg-black/30 hover:text-(--color-text)"
+            }`}
+          >
+            {o}
+          </button>
+        ))}
+      </div>
     </div>
   )
 }

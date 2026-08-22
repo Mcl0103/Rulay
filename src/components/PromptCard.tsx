@@ -94,7 +94,7 @@ export function PromptCard({ name = "Marlon" }: { name?: string }) {
             role="tab"
             aria-selected={mode === m.id}
             onClick={() => setMode(m.id)}
-            className="t-tab flex items-center gap-1.5 text-sm"
+            className="t-tab flex items-center justify-center gap-1.5 text-sm"
           >
             <m.icon className="h-3.5 w-3.5" />
             {t(m.labelKey)}

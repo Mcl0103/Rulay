@@ -17,6 +17,7 @@ import {
   Sun,
 } from "lucide-react"
 import { Sidebar } from "../components/Sidebar"
+import { MobileNav } from "../components/MobileNav"
 import { StaggerHeader } from "../components/StaggerHeader"
 import { useAuth } from "../lib/auth"
 import { useTheme, type Theme } from "../lib/theme"
@@ -194,7 +195,8 @@ export function Configuracion() {
   return (
     <div className="flex h-screen bg-(--color-base)">
       <Sidebar />
-      <main data-theme={theme} className="flex-1 overflow-y-auto bg-(--color-panel)/40 p-6">
+      <MobileNav />
+      <main data-theme={theme} className="flex-1 overflow-y-auto bg-(--color-panel)/40 p-4 pb-24 md:p-6">
         <GuardedLink
           to="/app"
           className="inline-flex items-center gap-2 text-sm text-(--color-muted) transition hover:text-(--color-text)"
@@ -213,30 +215,17 @@ export function Configuracion() {
               {t("config.apariencia")}
             </div>
             <p className="mt-1 text-xs text-(--color-muted-2)">{t("config.apparienciaDesc")}</p>
-            <div className="mt-3 flex gap-2">
-              <button
-                onClick={() => setPendingTheme("dark")}
-                className={`flex items-center gap-1.5 rounded-full border px-3 py-1.5 text-xs transition ${
-                  pendingTheme === "dark"
-                    ? "border-(--color-accent) bg-(--color-accent)/15 text-(--color-text)"
-                    : "border-(--color-border) text-(--color-muted) hover:border-(--color-border-hover) hover:text-(--color-text)"
-                }`}
-              >
-                <Moon className="h-3.5 w-3.5" />
-                {t("config.oscuro")}
-              </button>
-              <button
-                onClick={() => setPendingTheme("light")}
-                className={`flex items-center gap-1.5 rounded-full border px-3 py-1.5 text-xs transition ${
-                  pendingTheme === "light"
-                    ? "border-(--color-accent) bg-(--color-accent)/15 text-(--color-text)"
-                    : "border-(--color-border) text-(--color-muted) hover:border-(--color-border-hover) hover:text-(--color-text)"
-                }`}
-              >
-                <Sun className="h-3.5 w-3.5" />
-                {t("config.claro")}
-              </button>
-            </div>
+            <button
+              type="button"
+              onClick={() => setPendingTheme(pendingTheme === "dark" ? "light" : "dark")}
+              className="mt-3 flex items-center gap-2 rounded-full border border-(--color-accent) bg-(--color-accent)/15 px-3.5 py-1.5 text-xs text-(--color-text) transition hover:border-(--color-border-hover)"
+            >
+              <span className="t-icon-swap h-3.5 w-3.5" data-state={pendingTheme === "dark" ? "a" : "b"}>
+                <Moon className="t-icon h-3.5 w-3.5" data-icon="a" />
+                <Sun className="t-icon h-3.5 w-3.5" data-icon="b" />
+              </span>
+              {pendingTheme === "dark" ? t("config.oscuro") : t("config.claro")}
+            </button>
           </div>
 
           {/* País / moneda / idioma de contenido */}

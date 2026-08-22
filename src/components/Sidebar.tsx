@@ -17,20 +17,20 @@ import { Logo } from "./Logo"
 import { useAuth } from "../lib/auth"
 import { useLanguage, type TranslationKey } from "../lib/i18n"
 
-const inicioItems = [{ icon: LayoutGrid, labelKey: "sidebar.dashboard" as TranslationKey, to: "/app" }]
+export const inicioItems = [{ icon: LayoutGrid, labelKey: "sidebar.dashboard" as TranslationKey, to: "/app" }]
 
-const paginasItems = [
+export const paginasItems = [
   { icon: Sparkles, labelKey: "sidebar.crearProductPage" as TranslationKey, to: "/app/generar" },
   { icon: LayoutTemplate, labelKey: "sidebar.landingImagenes" as TranslationKey, to: "/app/landing" },
   { icon: FileText, labelKey: "sidebar.tusPaginas" as TranslationKey, to: "/app/paginas" },
 ]
 
-const imagenesItems = [
+export const imagenesItems = [
   { icon: ImagePlus, labelKey: "sidebar.imagenesIA" as TranslationKey, to: "/app/imagenes" },
   { icon: UserRound, labelKey: "sidebar.avatares" as TranslationKey, to: "/app/avatares" },
 ]
 
-const cuentaItems = [
+export const cuentaItems = [
   { icon: Plug, labelKey: "sidebar.integraciones" as TranslationKey, to: "/app/integraciones" },
   { icon: Settings, labelKey: "sidebar.configuracion" as TranslationKey, to: "/app/configuracion" },
 ]
@@ -40,7 +40,7 @@ export function Sidebar() {
   const { t } = useLanguage()
 
   return (
-    <aside className="relative flex h-full w-64 shrink-0 flex-col border-r border-dashed border-(--color-border) bg-(--color-panel) p-4">
+    <aside className="relative hidden h-full w-64 shrink-0 flex-col border-r border-dashed border-(--color-border) bg-(--color-panel) p-4 md:flex">
       <span className="corner-dot" style={{ left: "100%", top: 0 }} />
       <span className="corner-dot" style={{ left: "100%", bottom: 0 }} />
       <div className="mb-4 flex shrink-0 items-center gap-2">

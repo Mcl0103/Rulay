@@ -21,7 +21,7 @@ export function ConnectShopifyBanner() {
   }
 
   return (
-    <div className="relative mb-6 flex items-center justify-between gap-4 overflow-hidden rounded-2xl border border-white/10 bg-black px-5 py-4">
+    <div className="relative mb-6 flex flex-col items-start gap-3 overflow-hidden rounded-2xl border border-white/10 bg-black px-5 py-4 md:flex-row md:items-center md:justify-between md:gap-4">
       <div
         className="pointer-events-none absolute -left-10 top-1/2 h-40 w-40 -translate-y-1/2 rounded-full opacity-40 blur-3xl"
         style={{ background: "#95BF47" }}
@@ -40,7 +40,7 @@ export function ConnectShopifyBanner() {
           </p>
         </div>
       </div>
-      <div className="relative flex shrink-0 items-center gap-2">
+      <div className="relative flex w-full shrink-0 items-center justify-between gap-2 md:w-auto md:justify-end">
         {connected ? null : (
           <button
             onClick={handleConnect}

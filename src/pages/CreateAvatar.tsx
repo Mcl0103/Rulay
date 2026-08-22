@@ -10,6 +10,7 @@ import {
   X,
 } from "lucide-react"
 import { Sidebar } from "../components/Sidebar"
+import { MobileNav } from "../components/MobileNav"
 import { ClearableSearchInput } from "../components/ClearableSearchInput"
 import { useTheme } from "../lib/theme"
 import { useLanguage, type TranslationKey } from "../lib/i18n"
@@ -128,6 +129,11 @@ export function CreateAvatar() {
     new Set(["tipo", "genero", "piel", "ojos"]),
   )
 
+  // Mobile: la galería y el builder de 7 secciones no caben apilados en un
+  // solo scroll — se navegan como dos pantallas separadas (mismo patrón que
+  // usa Higgsfield en su app mobile), en vez de las 3 columnas de escritorio.
+  const [mobileStep, setMobileStep] = useState<"gallery" | "builder">("gallery")
+
   function toggleSection(id: string) {
     setOpenSections((prev) => {
       const next = new Set(prev)
@@ -186,7 +192,7 @@ export function CreateAvatar() {
           </Link>
         </div>
 
-        <div className="flex min-h-0 flex-1 overflow-hidden">
+        <div className="hidden min-h-0 flex-1 overflow-hidden md:flex">
           {/* ---- Galería lateral ---- */}
           <aside
             className="flex min-h-0 w-44 shrink-0 origin-left animate-[fadein_.45s_ease_forwards] flex-col gap-3 overflow-y-auto border-r border-(--color-border) p-4 opacity-0"
@@ -436,6 +442,272 @@ export function CreateAvatar() {
               </div>
             </Section>
           </aside>
+        </div>
+
+        {/* ---- Mobile: galería y builder como pantallas separadas (patrón Higgsfield) ---- */}
+        <div className="flex min-h-0 flex-1 flex-col overflow-hidden md:hidden">
+          {mobileStep === "gallery" ? (
+            <>
+              <div className="flex min-h-0 flex-1 flex-col overflow-y-auto p-4 pb-24">
+                <ClearableSearchInput
+                  value={gallerySearch}
+                  onChange={setGallerySearch}
+                  placeholder={t("avatares.buscarPlaceholder")}
+                  className="rounded-lg border border-(--color-border) bg-(--color-panel) transition focus-within:border-(--color-border-hover)"
+                />
+
+                <div className="mt-4 grid grid-cols-2 gap-3">
+                  <button
+                    onClick={() => {
+                      setSelectedGalleryId(null)
+                      setMobileStep("builder")
+                    }}
+                    className="group flex aspect-[3/4] flex-col items-center justify-center gap-2 rounded-xl border border-dashed border-(--color-border) bg-(--color-panel) text-center transition hover:border-(--color-border-hover)"
+                  >
+                    <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-(--color-panel-2) text-(--color-muted) transition group-hover:text-(--color-accent-2)">
+                      <Plus className="h-5 w-5" />
+                    </div>
+                    <span className="text-sm font-medium text-(--color-muted) transition group-hover:text-(--color-text)">
+                      {t("avatares.crearNuevo")}
+                    </span>
+                  </button>
+
+                  {GALLERY.filter((av) => av.name.toLowerCase().includes(gallerySearch.toLowerCase())).map((av) => (
+                    <button
+                      key={av.id}
+                      onClick={() => {
+                        setSelectedGalleryId(av.id)
+                        setMobileStep("builder")
+                      }}
+                      className={`relative flex aspect-[3/4] items-end overflow-hidden rounded-xl border bg-gradient-to-br p-2.5 transition ${av.gradient} ${
+                        selectedGalleryId === av.id
+                          ? "border-(--color-accent)"
+                          : "border-(--color-border) hover:border-(--color-border-hover)"
+                      }`}
+                    >
+                      <span className="rounded-full bg-black/50 px-2 py-0.5 text-[11px] font-medium text-white backdrop-blur">
+                        {av.name}
+                      </span>
+                    </button>
+                  ))}
+                </div>
+
+                {GALLERY.length === 0 && (
+                  <p className="mt-4 text-center text-xs text-(--color-muted-2)">{t("avatares.galeriaVacia")}</p>
+                )}
+              </div>
+              <MobileNav />
+            </>
+          ) : (
+            <>
+              <div className="flex min-h-0 flex-1 flex-col overflow-y-auto p-4">
+                <button
+                  onClick={() => setMobileStep("gallery")}
+                  className="mb-4 inline-flex items-center gap-1.5 self-start text-sm text-(--color-muted) transition hover:text-(--color-text)"
+                >
+                  <ArrowLeft className="h-4 w-4" />
+                  {t("avatares.miGaleria")}
+                </button>
+
+                {selected ? (
+                  <div
+                    className={`mx-auto flex aspect-square w-32 items-end justify-center rounded-2xl border border-(--color-border) bg-gradient-to-br p-3 ${selected.gradient}`}
+                  >
+                    <span className="rounded-full bg-black/50 px-2.5 py-1 text-xs font-medium text-white backdrop-blur">
+                      {selected.name}
+                    </span>
+                  </div>
+                ) : (
+                  <div className="mx-auto flex aspect-square w-32 flex-col items-center justify-center gap-2 rounded-2xl border border-dashed border-(--color-border) bg-(--color-panel) px-3 text-center">
+                    <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-(--color-panel-2) text-(--color-muted)">
+                      <UserRound className="h-4.5 w-4.5" />
+                    </div>
+                    <p className="text-[11px] leading-tight font-medium text-(--color-text)">{t("avatares.vacioTitulo")}</p>
+                  </div>
+                )}
+
+                <label className="mt-5 mb-1.5 block text-sm text-(--color-muted)">
+                  {t("avatares.detallesAdicionales")}
+                </label>
+                <textarea
+                  rows={2}
+                  value={details}
+                  onChange={(e) => setDetails(e.target.value)}
+                  placeholder={t("avatares.placeholderDetalles")}
+                  className="w-full resize-none rounded-xl border border-(--color-border-hover) bg-(--color-panel-2) px-3.5 py-3 text-sm leading-snug text-(--color-text) placeholder:text-(--color-text)/45 focus:border-(--color-accent) focus:outline-none"
+                />
+                {qualityPills.length > 0 && (
+                  <div className="mt-3 flex flex-wrap gap-1.5">
+                    {qualityPills.map((p) => (
+                      <button
+                        key={p.key}
+                        onClick={p.onRemove}
+                        className="flex items-center gap-1.5 rounded-full border border-(--color-border) bg-(--color-panel-2) py-1 pr-1.5 pl-2.5 text-xs text-(--color-muted) transition hover:border-(--color-border-hover) hover:text-(--color-text)"
+                      >
+                        {p.swatch && <span className="h-2.5 w-2.5 rounded-full" style={{ background: p.swatch }} />}
+                        {p.label}
+                        <X className="h-3 w-3" />
+                      </button>
+                    ))}
+                  </div>
+                )}
+
+                <div className="mt-5">
+                  <Section title={t("avatares.tipoPersonaje")} open={openSections.has("tipo")} onToggle={() => toggleSection("tipo")}>
+                    <div className="flex flex-col gap-2">
+                      <button
+                        onClick={() => setOrigin("foto")}
+                        className={`rounded-xl border p-3 text-left transition ${
+                          origin === "foto"
+                            ? "border-(--color-accent) bg-(--color-accent)/10"
+                            : "border-(--color-border) hover:border-(--color-border-hover)"
+                        }`}
+                      >
+                        <p className="text-sm font-medium text-(--color-text)">{t("avatares.origenFoto")}</p>
+                        <p className="mt-0.5 text-xs text-(--color-muted-2)">{t("avatares.origenFotoDesc")}</p>
+                      </button>
+                      <button
+                        onClick={() => setOrigin("sintetico")}
+                        className={`rounded-xl border p-3 text-left transition ${
+                          origin === "sintetico"
+                            ? "border-(--color-accent) bg-(--color-accent)/10"
+                            : "border-(--color-border) hover:border-(--color-border-hover)"
+                        }`}
+                      >
+                        <p className="text-sm font-medium text-(--color-text)">{t("avatares.origenSintetico")}</p>
+                        <p className="mt-0.5 text-xs text-(--color-muted-2)">{t("avatares.origenSinteticoDesc")}</p>
+                      </button>
+
+                      {origin === "foto" && (
+                        <button className="mt-1 flex items-center justify-center gap-2 rounded-xl border border-dashed border-(--color-border) bg-(--color-panel) px-4 py-3 text-sm text-(--color-muted) transition hover:border-(--color-border-hover) hover:text-(--color-text)">
+                          <Upload className="h-4 w-4" />
+                          {t("avatares.subirFoto")}
+                        </button>
+                      )}
+                    </div>
+                  </Section>
+
+                  <Section title={t("avatares.genero")} open={openSections.has("genero")} onToggle={() => toggleSection("genero")}>
+                    <div className="grid grid-cols-2 gap-2">
+                      {GENDERS.map((g) => (
+                        <button
+                          key={g.id}
+                          onClick={() => setGender(g.id)}
+                          className={`rounded-lg border px-2 py-2.5 text-center text-xs transition ${
+                            gender === g.id
+                              ? "border-(--color-accent) bg-(--color-accent)/10 text-(--color-accent-2)"
+                              : "border-(--color-border) text-(--color-muted) hover:border-(--color-border-hover) hover:text-(--color-text)"
+                          }`}
+                        >
+                          {t(g.labelKey)}
+                        </button>
+                      ))}
+                    </div>
+                  </Section>
+
+                  <Section title={t("avatares.estiloRenderizado")} open={openSections.has("estilo")} onToggle={() => toggleSection("estilo")}>
+                    <div className="grid grid-cols-2 gap-2">
+                      {RENDER_STYLES.map((s) => (
+                        <button
+                          key={s.id}
+                          onClick={() => setRenderStyle(s.id)}
+                          className={`rounded-lg border px-2 py-2.5 text-center text-xs transition ${
+                            renderStyle === s.id
+                              ? "border-(--color-accent) bg-(--color-accent)/10 text-(--color-accent-2)"
+                              : "border-(--color-border) text-(--color-muted) hover:border-(--color-border-hover) hover:text-(--color-text)"
+                          }`}
+                        >
+                          {t(s.labelKey)}
+                        </button>
+                      ))}
+                    </div>
+                  </Section>
+
+                  <Section title={t("avatares.colorPiel")} open={openSections.has("piel")} onToggle={() => toggleSection("piel")}>
+                    <div className="grid grid-cols-5 gap-2">
+                      {SKIN_TONES.map((s) => (
+                        <button
+                          key={s.hex}
+                          onClick={() => setSkinTone(s.hex)}
+                          title={t(s.labelKey)}
+                          style={{ background: s.hex }}
+                          className={`aspect-square rounded-lg border-2 transition ${
+                            skinTone === s.hex ? "border-(--color-accent)" : "border-(--color-border) hover:border-(--color-border-hover)"
+                          }`}
+                        />
+                      ))}
+                    </div>
+                  </Section>
+
+                  <Section title={t("avatares.colorOjos")} open={openSections.has("ojos")} onToggle={() => toggleSection("ojos")}>
+                    <div className="grid grid-cols-4 gap-2">
+                      {EYE_COLORS.map((c) => (
+                        <button
+                          key={c.hex}
+                          onClick={() => setEyeColor(c.hex)}
+                          title={t(c.labelKey)}
+                          style={{ background: c.hex }}
+                          className={`aspect-square rounded-full border-2 transition ${
+                            eyeColor === c.hex ? "border-(--color-accent)" : "border-(--color-border) hover:border-(--color-border-hover)"
+                          }`}
+                        />
+                      ))}
+                    </div>
+                  </Section>
+
+                  <Section title={t("avatares.edad")} open={openSections.has("edad")} onToggle={() => toggleSection("edad")}>
+                    <div className="grid grid-cols-3 gap-2">
+                      {AGE_RANGES.map((a) => (
+                        <button
+                          key={a.id}
+                          onClick={() => setAgeRange(a.id)}
+                          className={`rounded-lg border px-2 py-2.5 text-center text-xs transition ${
+                            ageRange === a.id
+                              ? "border-(--color-accent) bg-(--color-accent)/10 text-(--color-accent-2)"
+                              : "border-(--color-border) text-(--color-muted) hover:border-(--color-border-hover) hover:text-(--color-text)"
+                          }`}
+                        >
+                          {t(a.labelKey)}
+                        </button>
+                      ))}
+                    </div>
+                  </Section>
+
+                  <Section title={t("avatares.tipoCuerpo")} open={openSections.has("cuerpo")} onToggle={() => toggleSection("cuerpo")}>
+                    <div className="grid grid-cols-3 gap-2">
+                      {BODY_TYPES.map((b) => (
+                        <button
+                          key={b.id}
+                          onClick={() => setBodyType(b.id)}
+                          className={`rounded-lg border px-2 py-2.5 text-center text-xs transition ${
+                            bodyType === b.id
+                              ? "border-(--color-accent) bg-(--color-accent)/10 text-(--color-accent-2)"
+                              : "border-(--color-border) text-(--color-muted) hover:border-(--color-border-hover) hover:text-(--color-text)"
+                          }`}
+                        >
+                          {t(b.labelKey)}
+                        </button>
+                      ))}
+                    </div>
+                  </Section>
+                </div>
+              </div>
+
+              <div className="shrink-0 border-t border-(--color-border) bg-(--color-panel) p-4 pb-[calc(1rem+env(safe-area-inset-bottom))]">
+                <button
+                  disabled={!canGenerate}
+                  className="flex min-h-12 w-full items-center justify-center gap-2 rounded-xl bg-(--color-primary) px-5 py-3 text-sm font-medium text-(--color-on-primary) transition hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-40"
+                >
+                  <Sparkles className="h-4 w-4" />
+                  {t("avatares.generar")}
+                  <span className="text-xs opacity-70">· {AVATAR_COST}cr</span>
+                </button>
+                <p className="mt-2 text-center text-xs text-(--color-muted-2)">
+                  {t("avatares.costoLinea", { n: AVATAR_COST })} <span className="text-(--color-muted)">{remaining}</span>
+                </p>
+              </div>
+            </>
+          )}
         </div>
       </main>
     </div>

@@ -374,9 +374,10 @@ body {
 
 .t-tabs {
   position: relative;
-  display: inline-flex;
+  display: flex;
+  width: 100%;
   align-items: center;
-  gap: 30px;
+  gap: 6px;
   padding: 5px;
   border-radius: 48px;
   background: var(--tabs-bar-bg);
@@ -387,7 +388,8 @@ body {
   border: 0;
   background: transparent;
   height: 34px;
-  padding: 6px 18px;
+  flex: 1;
+  padding: 6px 10px;
   color: var(--tabs-text-muted);
   cursor: pointer;
   border-radius: 48px;
@@ -395,6 +397,18 @@ body {
   transition:
     color var(--tabs-dur) var(--tabs-ease),
     transform 150ms var(--tabs-ease);
+}
+
+@media (min-width: 768px) {
+  .t-tabs {
+    display: inline-flex;
+    width: auto;
+    gap: 30px;
+  }
+  .t-tab {
+    flex: none;
+    padding: 6px 18px;
+  }
 }
 .t-tab:not([aria-selected="true"]):hover {
   color: var(--tabs-text-active);
@@ -635,6 +649,155 @@ body {
   bottom: 0;
   left: 0;
   z-index: 20;
+}
+
+/* Transitions.dev — Modal open / close
+
+  Usage:
+    <div class="t-modal" role="dialog">…</div>
+
+  State:
+    - Add `.is-open` to open (scales up from --modal-scale).
+    - On close, swap `.is-open` for `.is-closing`, then remove
+      `.is-closing` after --modal-close-dur.
+*/
+
+:root {
+  --modal-open-dur: 250ms;
+  --modal-close-dur: 150ms;
+  --modal-scale: 0.96;
+  --modal-scale-close: 0.96;
+  --modal-ease: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.t-modal {
+  transform-origin: center;
+  transform: scale(var(--modal-scale));
+  opacity: 0;
+  pointer-events: none;
+  transition:
+    transform var(--modal-open-dur) var(--modal-ease),
+    opacity   var(--modal-open-dur) var(--modal-ease);
+  will-change: transform, opacity;
+}
+.t-modal.is-open {
+  transform: scale(1);
+  opacity: 1;
+  pointer-events: auto;
+}
+.t-modal.is-closing {
+  transform: scale(var(--modal-scale-close));
+  opacity: 0;
+  pointer-events: none;
+  transition:
+    transform var(--modal-close-dur) var(--modal-ease),
+    opacity   var(--modal-close-dur) var(--modal-ease);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .t-modal { transition: none !important; }
+}
+
+/* Transitions.dev — Panel reveal */
+
+/*
+  Usage:
+    <div class="t-panel-slide" data-open="false">
+      <!-- your panel contents -->
+    </div>
+
+  The panel slides on the Y axis, fades opacity 0 ↔ 1,
+  and cross-blurs --panel-blur ↔ 0, all on the same
+  duration / ease so a shorter travel (e.g. 50% of the
+  panel height) still reads as a full open / close.
+  Wrap it in your own container with `overflow: hidden`
+  if you want the closed state fully clipped. Set
+  --panel-translate-y to the travel distance (e.g. half
+  the panel's own height).
+*/
+
+:root {
+  --panel-open-dur: 400ms;
+  --panel-close-dur: 350ms;
+  --panel-translate-y: calc(187px * 0.5);
+  --panel-blur: 2px;
+  --panel-ease: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.t-panel-slide {
+  transform: translateY(var(--panel-translate-y));
+  opacity: 0;
+  filter: blur(var(--panel-blur));
+  pointer-events: none;
+  transition:
+    transform var(--panel-close-dur) var(--panel-ease),
+    opacity   var(--panel-close-dur) var(--panel-ease),
+    filter    var(--panel-close-dur) var(--panel-ease);
+  will-change: transform, opacity, filter;
+}
+.t-panel-slide[data-open="true"] {
+  transform: translateY(0);
+  opacity: 1;
+  filter: blur(0);
+  pointer-events: auto;
+  transition:
+    transform var(--panel-open-dur) var(--panel-ease),
+    opacity   var(--panel-open-dur) var(--panel-ease),
+    filter    var(--panel-open-dur) var(--panel-ease);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .t-panel-slide { transition: none !important; }
+}
+
+/* Transitions.dev — Icon swap */
+
+/*
+  Usage:
+    <div class="t-icon-swap" data-state="a">
+      <span class="t-icon" data-icon="a">…</span>
+      <span class="t-icon" data-icon="b">…</span>
+    </div>
+
+  State: set data-state="a" or "b" on .t-icon-swap.
+  The matching .t-icon fades in; the other fades out with blur
+  and scale.
+*/
+
+:root {
+  --icon-swap-dur: 250ms;
+  --icon-swap-blur: 2px;
+  --icon-swap-start-scale: 0.25;
+  --icon-swap-ease: ease-in-out;
+}
+
+.t-icon-swap {
+  position: relative;
+  display: inline-grid;
+}
+.t-icon-swap .t-icon {
+  grid-area: 1 / 1;
+  transition:
+    opacity   var(--icon-swap-dur) var(--icon-swap-ease),
+    filter    var(--icon-swap-dur) var(--icon-swap-ease),
+    transform var(--icon-swap-dur) var(--icon-swap-ease);
+  will-change: opacity, filter, transform;
+}
+.t-icon-swap[data-state="a"] .t-icon[data-icon="a"],
+.t-icon-swap[data-state="b"] .t-icon[data-icon="b"] {
+  opacity: 1;
+  filter: blur(0);
+  transform: scale(1);
+}
+.t-icon-swap[data-state="a"] .t-icon[data-icon="b"],
+.t-icon-swap[data-state="b"] .t-icon[data-icon="a"] {
+  opacity: 0;
+  filter: blur(var(--icon-swap-blur));
+  transform: scale(var(--icon-swap-start-scale));
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .t-icon-swap .t-icon { transition: none !important; }
 }
 
 /* Transitions.dev — Toggle
