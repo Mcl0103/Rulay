@@ -1,19 +1,105 @@
 import { useEffect, useRef, useState } from "react"
 import { Link } from "react-router-dom"
-import { Menu, X } from "lucide-react"
+import { Menu, X, Image as ImageIcon, Link2, LayoutTemplate, Sparkles, ShoppingBag, Target } from "lucide-react"
 import { Logo } from "../components/Logo"
 import { Loader } from "../components/Loader"
+import { BorderBeam } from "border-beam"
+import vitaliaPageSkeleton from "../assets/vitalia-page-skeleton.png"
+import vitaliaPageFinished from "../assets/vitalia-page-finished.png"
 
-const SOURCES = ["AliExpress", "Amazon", "Shopify", "Dropi", "Aliclik", "TikTok Shop"]
-
-const CONSOLE_LINES = [
-  { color: "text-(--color-muted-2)", prefix: "$", text: "pegaste el link de tu producto" },
-  { color: "text-(--color-accent-2)", prefix: "→", text: "buscando tu ángulo de venta…" },
-  { color: "text-(--color-green)", prefix: "✓", text: "ángulo encontrado: \"duerme mejor en 20 min\"" },
-  { color: "text-(--color-accent-2)", prefix: "→", text: "generando imágenes de producto…" },
-  { color: "text-(--color-green)", prefix: "✓", text: "página lista para publicar" },
-  { color: "text-(--color-amber)", prefix: "↗", text: "publicando a tu tienda Shopify…" },
+// Reemplazar cada "img" por la URL real de la página/imagen generada cuando estén listas.
+const EXAMPLES = [
+  { label: "Belleza y cuidado personal", img: null },
+  { label: "Hogar y organización", img: null },
+  { label: "Tecnología y accesorios", img: null },
+  { label: "Fitness y bienestar", img: null },
+  { label: "Mascotas", img: null },
 ]
+
+const ROTATING_WORDS = ["testear", "escalar", "vender", "publicar"]
+
+// Reemplazar cada "img" por la captura real cuando esté lista.
+const FEATURES = [
+  {
+    icon: Link2,
+    tag: "Pega y listo",
+    title: "Página desde un link",
+    desc: "Pega la URL del producto (AliExpress, Amazon, Shopify, Dropi, Aliclik, TikTok Shop) y en segundos tienes la página armada.",
+    span: "large" as const,
+    linkDemo: true,
+    img: null,
+  },
+  {
+    icon: LayoutTemplate,
+    tag: "Sin código",
+    title: "Editor por secciones",
+    desc: "Reordena, edita textos y bloques, o arma la página desde cero. Todo se puede tocar, nada queda fijo.",
+    span: "large" as const,
+    img: null,
+  },
+  {
+    icon: Target,
+    tag: "Ángulo automático",
+    title: "IA encuentra el gancho",
+    desc: "Analiza el producto y te da el ángulo de venta, no solo una plantilla genérica con el texto cambiado.",
+    span: "small" as const,
+    img: null,
+  },
+  {
+    icon: Sparkles,
+    tag: "Imágenes IA",
+    title: "Fotos de producto sin cámara",
+    desc: "Genera imágenes de producto listas para vender, sin sesión de fotos ni editor externo.",
+    span: "small" as const,
+    img: null,
+  },
+  {
+    icon: ShoppingBag,
+    tag: "Shopify nativo",
+    title: "Conectada a tu tienda",
+    desc: "El botón de compra usa el checkout real de tu Shopify, no una simulación aparte.",
+    span: "small" as const,
+    img: null,
+  },
+]
+
+function RotatingWord() {
+  const [wordIndex, setWordIndex] = useState(0)
+  const [text, setText] = useState("")
+  const [phase, setPhase] = useState<"typing" | "pausing" | "deleting">("typing")
+
+  useEffect(() => {
+    const word = ROTATING_WORDS[wordIndex]
+    let timeout: ReturnType<typeof setTimeout>
+
+    if (phase === "typing") {
+      if (text.length < word.length) {
+        timeout = setTimeout(() => setText(word.slice(0, text.length + 1)), 90)
+      } else {
+        timeout = setTimeout(() => setPhase("pausing"), 1000)
+      }
+    } else if (phase === "pausing") {
+      timeout = setTimeout(() => setPhase("deleting"), 700)
+    } else {
+      if (text.length > 0) {
+        timeout = setTimeout(() => setText(text.slice(0, -1)), 45)
+      } else {
+        setWordIndex((i) => (i + 1) % ROTATING_WORDS.length)
+        setPhase("typing")
+        return
+      }
+    }
+
+    return () => clearTimeout(timeout)
+  }, [text, phase, wordIndex])
+
+  return (
+    <span className="relative inline-flex items-baseline font-serif text-(--color-accent) italic font-medium">
+      <span>{text}</span>
+      <span className="t-cursor-blink ml-0.5 inline-block h-[0.85em] w-[3px] translate-y-[0.08em] bg-(--color-accent)" />
+    </span>
+  )
+}
 
 
 /** Fades + slides a section in once it enters the viewport. Mirrors the
@@ -83,6 +169,62 @@ function GlowBlob({
   )
 }
 
+/** Carrusel infinito con efecto "coverflow": las tarjetas cercanas al centro
+ * del viewport crecen y se traen al frente en tiempo real mientras la fila
+ * se desplaza sola vía CSS. La animación de escala corre en un rAF propio
+ * porque depende de la posición en vivo de cada tarjeta, no de scroll. */
+function ExamplesCarousel({ items }: { items: { label: string }[] }) {
+  const viewportRef = useRef<HTMLDivElement>(null)
+  const cardRefs = useRef<(HTMLDivElement | null)[]>([])
+
+  useEffect(() => {
+    let raf = 0
+    const viewport = viewportRef.current
+    if (!viewport) return
+
+    function tick() {
+      const vRect = viewport!.getBoundingClientRect()
+      const centerX = vRect.left + vRect.width / 2
+      const half = vRect.width / 2
+
+      for (const card of cardRefs.current) {
+        if (!card) continue
+        const r = card.getBoundingClientRect()
+        const dist = Math.abs(r.left + r.width / 2 - centerX)
+        const closeness = Math.max(0, 1 - dist / half)
+        const scale = 0.85 + closeness * 0.22
+        card.style.transform = `scale(${scale.toFixed(3)}) translateY(${(-closeness * 10).toFixed(1)}px)`
+        card.style.zIndex = String(Math.round(closeness * 100))
+      }
+      raf = requestAnimationFrame(tick)
+    }
+    raf = requestAnimationFrame(tick)
+    return () => cancelAnimationFrame(raf)
+  }, [])
+
+  const doubled = [...items, ...items]
+
+  return (
+    <div
+      ref={viewportRef}
+      className="py-10 [mask-image:linear-gradient(90deg,transparent,#000_6%,#000_94%,transparent)]"
+    >
+      <div className="flex w-max animate-[scrollx_38s_linear_infinite] gap-9">
+        {doubled.map((ex, i) => (
+          <div
+            key={i}
+            ref={(el) => { cardRefs.current[i] = el }}
+            className="flex aspect-[9/16] w-[190px] shrink-0 flex-col items-center justify-center gap-2 rounded-2xl border border-(--color-border) bg-(--color-panel-2)/60 px-4 text-center text-(--color-muted-2) shadow-[0_20px_40px_-24px_rgba(0,0,0,0.35)] transition-shadow duration-200 sm:w-[220px]"
+          >
+            <ImageIcon className="h-7 w-7" />
+            <span className="text-xs">{ex.label}</span>
+          </div>
+        ))}
+      </div>
+    </div>
+  )
+}
+
 const NAV_LINKS = [
   { href: "#producto", label: "Producto" },
   { href: "#diferencia", label: "Por qué Rulay" },
@@ -93,10 +235,20 @@ const NAV_LINKS = [
 export function Landing() {
   const [menuOpen, setMenuOpen] = useState(false)
   const [ready, setReady] = useState(false)
+  const [scrolled, setScrolled] = useState(false)
 
   useEffect(() => {
     const t = setTimeout(() => setReady(true), 550)
     return () => clearTimeout(t)
+  }, [])
+
+  useEffect(() => {
+    function onScroll() {
+      setScrolled(window.scrollY > 24)
+    }
+    onScroll()
+    window.addEventListener("scroll", onScroll, { passive: true })
+    return () => window.removeEventListener("scroll", onScroll)
   }, [])
 
   return (
@@ -108,12 +260,23 @@ export function Landing() {
       <div data-theme="light" className="bg-(--color-base) text-(--color-text)">
         <Loader show={!ready} variant="dark" />
       {/* ---------- Nav ---------- */}
-      <header className="sticky top-3.5 z-50 px-6">
+      <header data-theme="light" className="fixed inset-x-0 top-3.5 z-50 px-6">
         <div className="mx-auto max-w-5xl">
-        <div className="flex items-center justify-between gap-4 rounded-full border border-(--color-border) bg-(--color-panel)/75 px-4 py-2.5 backdrop-blur-xl shadow-[0_12px_30px_-14px_rgba(0,0,0,0.6)]">
-          <Link to="/" className="flex shrink-0 items-center gap-2 text-[15px] font-extrabold tracking-tight">
-            <Logo className="h-6.5 w-6.5" variant="dark" />
-            <span>Rulay.AI</span>
+        <div
+          className={`flex items-center justify-between gap-4 rounded-full border px-4 py-2.5 backdrop-blur-xl transition-all duration-500 ease-out ${
+            scrolled
+              ? "border-(--color-border) bg-(--color-panel)/75 shadow-[0_12px_30px_-14px_rgba(0,0,0,0.6)] md:border-(--color-border) md:bg-(--color-panel)/75 md:px-4 md:shadow-[0_12px_30px_-14px_rgba(0,0,0,0.6)]"
+              : "border-(--color-border) bg-(--color-panel)/75 shadow-[0_12px_30px_-14px_rgba(0,0,0,0.6)] md:border-transparent md:bg-transparent md:px-1.5 md:py-1.5 md:shadow-none md:backdrop-blur-none"
+          }`}
+        >
+          <Link
+            to="/"
+            className="flex shrink-0 items-center gap-2 text-[15px] font-extrabold tracking-tight"
+          >
+            <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-black">
+              <Logo className="h-4.5 w-4.5" />
+            </span>
+            <span className="whitespace-nowrap">Rulay.AI</span>
           </Link>
           <nav className="hidden items-center gap-1 rounded-full bg-(--color-panel-2) p-1 text-sm text-(--color-muted) md:flex">
             <a
@@ -144,13 +307,13 @@ export function Landing() {
           <div className="flex shrink-0 items-center gap-2">
             <Link
               to="/login"
-              className="hidden rounded-full px-3.5 py-2 text-sm text-(--color-muted) transition hover:text-(--color-text) xs:inline-block"
+              className="hidden rounded-full px-3.5 py-2 text-sm whitespace-nowrap text-(--color-muted) transition hover:text-(--color-text) xs:inline-block"
             >
               Iniciar sesión
             </Link>
             <Link
               to="/login"
-              className="rounded-xl bg-gradient-to-b from-(--color-accent-2) to-(--color-accent) px-4 py-2 text-sm font-semibold text-white shadow-[0_8px_20px_-8px_rgba(59,130,246,0.6)] transition hover:brightness-110 active:scale-[0.98]"
+              className="rounded-xl bg-gradient-to-b from-(--color-accent-2) to-(--color-accent) px-4 py-2 text-sm font-semibold whitespace-nowrap text-white shadow-[0_8px_20px_-8px_rgba(59,130,246,0.6)] transition hover:brightness-110 active:scale-[0.98]"
             >
               Comenzar ahora
             </Link>
@@ -195,7 +358,7 @@ export function Landing() {
       </header>
 
       {/* ---------- Hero ---------- */}
-      <section className="relative overflow-hidden px-6 pt-20 pb-12">
+      <section className="relative px-6 pt-36 pb-12 sm:pt-40">
         <GlowBlob className="left-1/2 -top-24" opacity={0.7} size={1400} />
         <div className={`t-stagger hero-stagger relative mx-auto max-w-3xl text-center ${ready ? "is-shown" : ""}`}>
 
@@ -226,76 +389,107 @@ export function Landing() {
           </div>
           <p className="t-stagger-line t-stagger-line--4 mt-3 text-xs text-(--color-muted-2)">Sin suscripción · sin letra chica · sin compromiso mensual</p>
 
-          {/* ---- floating console + chips ---- */}
-          <div className="t-stagger-line t-stagger-line--5 relative mx-auto mt-12 max-w-[600px]">
-            <div className="pointer-events-none absolute -top-6 -left-10 hidden rotate-[-6deg] items-center gap-2 rounded-full border border-(--color-border) bg-(--color-panel-2) px-3.5 py-2 text-xs font-semibold text-(--color-muted) shadow-lg lg:flex">
-              <span className="h-1.5 w-1.5 rounded-full bg-(--color-accent-2)" />
-              Página de producto
-            </div>
-            <div className="pointer-events-none absolute top-6 -right-11 hidden rotate-[5deg] items-center gap-2 rounded-full border border-(--color-border) bg-(--color-panel-2) px-3.5 py-2 text-xs font-semibold text-(--color-muted) shadow-lg lg:flex">
-              <span className="h-1.5 w-1.5 rounded-full bg-(--color-green)" />
-              Imágenes IA
-            </div>
-            <div className="pointer-events-none absolute -bottom-5 left-7 hidden rotate-[-3deg] items-center gap-2 rounded-full border border-(--color-border) bg-(--color-panel-2) px-3.5 py-2 text-xs font-semibold text-(--color-muted) shadow-lg lg:flex">
-              <span className="h-1.5 w-1.5 rounded-full bg-(--color-amber)" />
-              Landing por secciones
-            </div>
+        </div>
+      </section>
 
-            <div className="overflow-hidden rounded-2xl border border-(--color-border) bg-[#0d1016] text-left shadow-[0_30px_60px_-24px_rgba(0,0,0,0.7)]">
-              <div className="flex items-center gap-1.5 border-b border-(--color-border) bg-(--color-panel) px-4 py-2.5">
-                <span className="h-2 w-2 rounded-full bg-(--color-border)" />
-                <span className="h-2 w-2 rounded-full bg-(--color-border)" />
-                <span className="h-2 w-2 rounded-full bg-(--color-border)" />
-                <span className="ml-2 font-mono text-xs text-(--color-muted-2)">rulay — generar página</span>
-              </div>
-              <div className="space-y-2 px-5 py-4 font-mono text-[13px] leading-relaxed">
-                {CONSOLE_LINES.map((line, i) => (
-                  <div
-                    key={i}
-                    className="animate-[fadein_.4s_ease_forwards] opacity-0"
-                    style={{ animationDelay: `${0.1 + i * 0.4}s` }}
-                  >
-                    <span className={line.color}>{line.prefix}</span>{" "}
-                    <span className="text-(--color-muted)">{line.text}</span>
+      {/* ---------- Ejemplos ---------- */}
+      <section id="producto" className="px-6 pt-2 pb-16">
+        <Reveal>
+          <ExamplesCarousel items={EXAMPLES} />
+        </Reveal>
+      </section>
+
+      {/* ---------- Por qué Rulay ---------- */}
+      <section id="diferencia" className="px-6 pb-20">
+        <Reveal className="mx-auto max-w-3xl text-center">
+          <h2 className="text-[2.15rem] leading-[1.04] font-black tracking-tight sm:text-6xl">
+            Todo lo que necesitas para
+            <br />
+            <RotatingWord /> tu tienda
+          </h2>
+        </Reveal>
+
+        <div className="mx-auto mt-12 grid max-w-5xl grid-cols-1 gap-5 sm:grid-cols-6">
+          {FEATURES.map((f) => (
+            <Reveal
+              key={f.title}
+              className={`overflow-hidden rounded-2xl border border-(--color-border) bg-(--color-panel) text-center ${
+                f.span === "large" ? "sm:col-span-3" : "sm:col-span-2"
+              }`}
+            >
+              {f.linkDemo ? (
+                <div>
+                  <div className="bg-white px-5 pt-4 pb-1">
+                    <BorderBeam size="pulse-inner" colorVariant="ocean" strength={0.7} theme="light">
+                      <div className="flex items-center gap-2 rounded-full border border-(--color-border) bg-(--color-panel) px-4 py-2.5 shadow-[0_8px_20px_-12px_rgba(0,0,0,0.3)]">
+                        <span className="flex-1 truncate text-left text-xs text-(--color-muted)">
+                          http://aliexpress.us/item/1005008406212693.html
+                        </span>
+                        <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-black text-white">
+                          <Sparkles className="h-3.5 w-3.5" />
+                        </span>
+                      </div>
+                    </BorderBeam>
+                    <div className="mt-3 flex flex-wrap items-center justify-center gap-x-4 gap-y-1 text-xs font-semibold text-(--color-muted-2)">
+                      <span>AliExpress</span>
+                      <span>Amazon</span>
+                      <span>Shopify</span>
+                      <span>Dropi</span>
+                      <span>Aliclik</span>
+                    </div>
                   </div>
-                ))}
+                  <div className="relative" style={{ aspectRatio: "1024 / 1100" }}>
+                    <div className="absolute inset-0 overflow-hidden bg-white">
+                      <img
+                        src={vitaliaPageSkeleton}
+                        alt=""
+                        className="absolute inset-0 h-full w-full scale-[0.97] object-cover object-top [mask-image:linear-gradient(to_bottom,#000_78%,transparent_98%)]"
+                      />
+                      <img
+                        src={vitaliaPageFinished}
+                        alt=""
+                        className="t-scan-reveal absolute inset-0 h-full w-full object-cover object-top [mask-image:linear-gradient(to_bottom,#000_78%,transparent_98%)]"
+                      />
+                    </div>
+                    <div
+                      className="t-scan-bar pointer-events-none absolute h-[3px] rounded-full bg-(--color-accent)"
+                      style={{
+                        left: "-20px",
+                        right: "-20px",
+                        boxShadow:
+                          "0 0 8px 2px rgba(59,130,246,0.9), 0 0 24px 8px rgba(59,130,246,0.55), 0 0 44px 16px rgba(59,130,246,0.28)",
+                      }}
+                    />
+                  </div>
+                </div>
+              ) : (
+                <div className="relative flex aspect-[4/3] items-center justify-center bg-(--color-panel-2)/60 text-(--color-muted-2) [mask-image:linear-gradient(to_bottom,#000_55%,transparent_95%)]">
+                  <ImageIcon className="h-8 w-8" />
+                </div>
+              )}
+              <div className="relative px-5 pt-4 pb-5">
+                <div className="flex items-center justify-center gap-1.5 text-xs font-semibold text-(--color-accent)">
+                  <f.icon className="h-3.5 w-3.5" />
+                  {f.tag}
+                </div>
+                <h3 className="mt-1.5 font-bold">{f.title}</h3>
+                <p className="mt-1 text-sm text-(--color-muted)">{f.desc}</p>
               </div>
-            </div>
-          </div>
-
-          {/* ---- source marquee ---- */}
-          <div className="t-stagger-line t-stagger-line--6 mt-14 pt-7">
-            <p className="mb-4 text-center font-mono text-[11px] tracking-wide text-(--color-muted-2)">
-              GENERA PÁGINAS DESDE
-            </p>
-            <div className="overflow-hidden [mask-image:linear-gradient(90deg,transparent,#000_8%,#000_92%,transparent)]">
-              <div className="flex w-max animate-[scrollx_22s_linear_infinite] gap-10">
-                {[...SOURCES, ...SOURCES].map((s, i) => (
-                  <span key={i} className="text-sm font-bold whitespace-nowrap text-(--color-muted-2)">
-                    {s}
-                  </span>
-                ))}
-              </div>
-            </div>
-          </div>
+            </Reveal>
+          ))}
         </div>
       </section>
 
       </div>
 
-      {/* ---------- Footer ----------
-          Fondo exterior: degradado blanco -> negro, muy suave, ocupa toda la
-          sección. La caja negra con borde flota encima, como pieza física. */}
+      {/* ---------- Footer ---------- */}
       <footer
-        className="relative px-6 pt-24 pb-16 sm:px-10 sm:pt-32 sm:pb-24"
-        style={{
-          background:
-            "linear-gradient(to bottom, #FFFFFF 0%, #F7F8F8 15%, #E6E8E9 28%, #C7CBCE 40%, #8D9297 53%, #4A4E53 68%, #181A1D 84%, #0A0B0D 100%)",
-        }}
+        className="relative px-6 pt-24 sm:px-10 sm:pt-32"
+        style={{ background: "#0A0B0D" }}
       >
         <div
-          className="relative mx-auto overflow-hidden border-[6px] border-[#F3F4F4]"
-          style={{ width: "min(1200px, calc(100% - 60px))", borderRadius: "10px", background: "#0A0B0D" }}
+          className="relative -mx-6 overflow-hidden sm:-mx-10"
+          style={{ background: "#0A0B0D" }}
         >
           {/* azul, extremadamente sutil */}
           <div
@@ -385,14 +579,16 @@ export function Landing() {
           </Reveal>
 
           {/* RULAY gigante, recortado por el borde inferior de la caja */}
-          <div className="relative h-[clamp(150px,19vw,300px)] overflow-hidden">
+          <div className="relative h-[clamp(180px,21vw,326px)] overflow-hidden">
             <span
-              className="pointer-events-none absolute left-1/2 text-[42vw] leading-none font-bold whitespace-nowrap text-white/[0.06] select-none sm:text-[clamp(220px,31vw,480px)]"
+              className="pointer-events-none absolute left-1/2 text-[clamp(80px,24vw,200px)] leading-none font-bold whitespace-nowrap text-white/[0.06] select-none sm:text-[clamp(220px,31vw,480px)]"
               style={{
-                bottom: "-0.1em",
+                top: 0,
                 transform: "translateX(-50%) scaleX(1.15)",
                 letterSpacing: "-0.03em",
-              }}
+                textBoxTrim: "trim-both",
+                textBoxEdge: "cap alphabetic",
+              } as React.CSSProperties}
             >
               RULAY
             </span>

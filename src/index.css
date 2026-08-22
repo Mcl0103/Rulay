@@ -232,6 +232,42 @@ body {
   .t-loader-ring-pro { animation: none; }
 }
 
+@keyframes cursor-blink {
+  0%, 45% { opacity: 1; }
+  50%, 95% { opacity: 0; }
+  100% { opacity: 1; }
+}
+.t-cursor-blink {
+  animation: cursor-blink 1s steps(1) infinite;
+}
+@media (prefers-reduced-motion: reduce) {
+  .t-cursor-blink { animation: none; }
+}
+
+@keyframes scan-reveal {
+  0%   { clip-path: inset(0 0 92% 0); }
+  45%  { clip-path: inset(0 0 0% 0); }
+  55%  { clip-path: inset(0 0 0% 0); }
+  100% { clip-path: inset(0 0 92% 0); }
+}
+@keyframes scan-bar {
+  0%   { top: 8%; }
+  45%  { top: 100%; }
+  55%  { top: 100%; }
+  100% { top: 8%; }
+}
+.t-scan-reveal {
+  animation: scan-reveal 4s ease-in-out infinite;
+}
+.t-scan-bar {
+  animation: scan-bar 4s ease-in-out infinite;
+}
+@media (prefers-reduced-motion: reduce) {
+  .t-scan-reveal, .t-scan-bar { animation: none; }
+  .t-scan-reveal { clip-path: inset(0 0 0% 0); }
+  .t-scan-bar { display: none; }
+}
+
 .t-stagger.is-shown .t-stagger-line {
   opacity: 1;
   transform: translateY(0);
