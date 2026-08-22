@@ -6,12 +6,12 @@ import {
   FileText,
   ImagePlus,
   Plug,
-  CircleHelp,
   Coins,
   ChevronsUpDown,
   Sparkles,
   LayoutTemplate,
   Settings,
+  UserRound,
 } from "lucide-react"
 import { Logo } from "./Logo"
 import { useAuth } from "../lib/auth"
@@ -25,10 +25,9 @@ const paginasItems = [
   { icon: FileText, labelKey: "sidebar.tusPaginas" as TranslationKey, to: "/app/paginas" },
 ]
 
-const imagenesItems = [{ icon: ImagePlus, labelKey: "sidebar.imagenesIA" as TranslationKey, to: "/app/imagenes" }]
-
-const supportItems = [
-  { icon: CircleHelp, labelKey: "sidebar.centroAyuda" as TranslationKey, to: "/app/ayuda" },
+const imagenesItems = [
+  { icon: ImagePlus, labelKey: "sidebar.imagenesIA" as TranslationKey, to: "/app/imagenes" },
+  { icon: UserRound, labelKey: "sidebar.avatares" as TranslationKey, to: "/app/avatares" },
 ]
 
 const cuentaItems = [
@@ -44,62 +43,53 @@ export function Sidebar() {
     <aside className="relative flex h-full w-64 shrink-0 flex-col border-r border-dashed border-(--color-border) bg-(--color-panel) p-4">
       <span className="corner-dot" style={{ left: "100%", top: 0 }} />
       <span className="corner-dot" style={{ left: "100%", bottom: 0 }} />
-      <div className="mb-4 flex items-center gap-2">
+      <div className="mb-4 flex shrink-0 items-center gap-2">
         <Logo />
-        <span className="font-serif text-[17px] text-white">
-          Rulay<span className="text-(--color-accent-2)">.AI</span>
-        </span>
+        <span className="font-serif text-[17px] text-white">Rulay.AI</span>
       </div>
 
-      <div className="flex flex-col gap-0.5">
-        <p className="px-3 pb-1.5 text-[11px] font-medium tracking-wide text-(--color-muted-2) uppercase">
-          {t("sidebar.inicio")}
-        </p>
-        {inicioItems.map((item) => (
-          <NavItem key={item.labelKey} icon={item.icon} label={t(item.labelKey)} to={item.to} active={pathname === item.to} />
-        ))}
+      <nav className="min-h-0 flex-1 overflow-y-auto">
+        <div className="flex flex-col gap-0.5">
+          <p className="px-3 pb-1.5 text-[11px] font-medium tracking-wide text-(--color-muted-2) uppercase">
+            {t("sidebar.inicio")}
+          </p>
+          {inicioItems.map((item) => (
+            <NavItem key={item.labelKey} icon={item.icon} label={t(item.labelKey)} to={item.to} active={pathname === item.to} />
+          ))}
+        </div>
+
+        <div className="mt-5 flex flex-col gap-0.5">
+          <p className="px-3 pb-1.5 text-[11px] font-medium tracking-wide text-(--color-muted-2) uppercase">
+            {t("sidebar.paginas")}
+          </p>
+          {paginasItems.map((item) => (
+            <NavItem key={item.labelKey} icon={item.icon} label={t(item.labelKey)} to={item.to} active={pathname === item.to} />
+          ))}
+        </div>
+
+        <div className="mt-5 flex flex-col gap-0.5">
+          <p className="px-3 pb-1.5 text-[11px] font-medium tracking-wide text-(--color-muted-2) uppercase">
+            {t("sidebar.imagenesGrupo")}
+          </p>
+          {imagenesItems.map((item) => (
+            <NavItem key={item.labelKey} icon={item.icon} label={t(item.labelKey)} to={item.to} active={pathname === item.to} />
+          ))}
+        </div>
+
+        <div className="mt-5 flex flex-col gap-0.5">
+          <p className="px-3 pb-1.5 text-[11px] font-medium tracking-wide text-(--color-muted-2) uppercase">
+            {t("sidebar.cuenta")}
+          </p>
+          {cuentaItems.map((item) => (
+            <NavItem key={item.labelKey} icon={item.icon} label={t(item.labelKey)} to={item.to} active={pathname === item.to} />
+          ))}
+        </div>
+      </nav>
+
+      <div className="shrink-0">
+        <CreditsCard />
+        <ProfileCard />
       </div>
-
-      <div className="mt-5 flex flex-col gap-0.5">
-        <p className="px-3 pb-1.5 text-[11px] font-medium tracking-wide text-(--color-muted-2) uppercase">
-          {t("sidebar.paginas")}
-        </p>
-        {paginasItems.map((item) => (
-          <NavItem key={item.labelKey} icon={item.icon} label={t(item.labelKey)} to={item.to} active={pathname === item.to} />
-        ))}
-      </div>
-
-      <div className="mt-5 flex flex-col gap-0.5">
-        <p className="px-3 pb-1.5 text-[11px] font-medium tracking-wide text-(--color-muted-2) uppercase">
-          {t("sidebar.imagenesGrupo")}
-        </p>
-        {imagenesItems.map((item) => (
-          <NavItem key={item.labelKey} icon={item.icon} label={t(item.labelKey)} to={item.to} active={pathname === item.to} />
-        ))}
-      </div>
-
-      <div className="mt-5 flex flex-col gap-0.5">
-        <p className="px-3 pb-1.5 text-[11px] font-medium tracking-wide text-(--color-muted-2) uppercase">
-          {t("sidebar.soporte")}
-        </p>
-        {supportItems.map((item) => (
-          <NavItem key={item.labelKey} icon={item.icon} label={t(item.labelKey)} to={item.to} active={pathname === item.to} />
-        ))}
-      </div>
-
-      <div className="mt-5 flex flex-col gap-0.5">
-        <p className="px-3 pb-1.5 text-[11px] font-medium tracking-wide text-(--color-muted-2) uppercase">
-          {t("sidebar.cuenta")}
-        </p>
-        {cuentaItems.map((item) => (
-          <NavItem key={item.labelKey} icon={item.icon} label={t(item.labelKey)} to={item.to} active={pathname === item.to} />
-        ))}
-      </div>
-
-      <div className="flex-1" />
-
-      <CreditsCard />
-      <ProfileCard />
     </aside>
   )
 }
