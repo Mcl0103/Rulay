@@ -1,5 +1,4 @@
 import { Sidebar } from "../components/Sidebar"
-import { MobileNav } from "../components/MobileNav"
 import { TopBar } from "../components/TopBar"
 import { PromptCard } from "../components/PromptCard"
 import { StatCards } from "../components/StatCards"
@@ -14,7 +13,6 @@ export function Dashboard() {
   return (
     <div className="flex h-screen bg-(--color-base)">
       <Sidebar />
-      <MobileNav />
       <main data-theme={theme} className="flex-1 overflow-y-auto bg-(--color-panel)/40 p-4 pb-24 md:p-6">
         <TopBar label={t("sidebar.dashboard")} />
         <div className="mx-auto mt-10 max-w-2xl">

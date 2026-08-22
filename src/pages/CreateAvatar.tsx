@@ -10,7 +10,6 @@ import {
   X,
 } from "lucide-react"
 import { Sidebar } from "../components/Sidebar"
-import { MobileNav } from "../components/MobileNav"
 import { ClearableSearchInput } from "../components/ClearableSearchInput"
 import { useTheme } from "../lib/theme"
 import { useLanguage, type TranslationKey } from "../lib/i18n"
@@ -496,7 +495,6 @@ export function CreateAvatar() {
                   <p className="mt-4 text-center text-xs text-(--color-muted-2)">{t("avatares.galeriaVacia")}</p>
                 )}
               </div>
-              <MobileNav />
             </>
           ) : (
             <>

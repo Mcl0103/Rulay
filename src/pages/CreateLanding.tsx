@@ -13,7 +13,6 @@ import {
 } from "lucide-react"
 import { BorderBeam } from "border-beam"
 import { Sidebar } from "../components/Sidebar"
-import { MobileNav } from "../components/MobileNav"
 import { StaggerHeader } from "../components/StaggerHeader"
 import { useTheme } from "../lib/theme"
 import { useLanguage, type TranslationKey } from "../lib/i18n"
@@ -136,7 +135,6 @@ export function CreateLanding() {
   return (
     <div className="flex h-screen bg-(--color-base)">
       <Sidebar />
-      <MobileNav />
       <main data-theme={theme} className="flex flex-1 flex-col overflow-y-auto bg-(--color-panel)/40 p-4 pb-24 md:p-6">
         <Link
           to="/app"

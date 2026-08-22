@@ -4,6 +4,7 @@ import { useAuth } from "../lib/auth"
 import { useLanguage } from "../lib/i18n"
 import { GuardedLink } from "../lib/unsavedGuard"
 import { Loader } from "./Loader"
+import { MobileNav } from "./MobileNav"
 
 export function RequireAuth({ children }: { children: React.ReactNode }) {
   const { session, loading } = useAuth()
@@ -23,6 +24,13 @@ export function RequireAuth({ children }: { children: React.ReactNode }) {
           {!loading && children}
         </div>
       </div>
+
+      {/* Fuera de .t-skel a propósito: .t-skel-content tiene `filter` para
+          el efecto reveal, y cualquier ancestro con filter/transform se
+          vuelve el "containing block" de sus hijos position:fixed — meter
+          MobileNav ahí adentro rompía que quedara anclado al viewport real
+          (se desprendía al hacer scroll en mobile). */}
+      {!loading && <MobileNav />}
 
       {!loading && (
         <GuardedLink

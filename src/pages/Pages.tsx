@@ -9,7 +9,6 @@ import {
   Sparkles,
 } from "lucide-react"
 import { Sidebar } from "../components/Sidebar"
-import { MobileNav } from "../components/MobileNav"
 import { StaggerHeader } from "../components/StaggerHeader"
 import { useTheme } from "../lib/theme"
 import { useLanguage } from "../lib/i18n"
@@ -35,7 +34,6 @@ export function Pages() {
   return (
     <div className="flex h-screen bg-(--color-base)">
       <Sidebar />
-      <MobileNav />
       <main data-theme={theme} className="flex-1 overflow-y-auto bg-(--color-panel)/40 p-4 pb-24 md:p-6">
         <div className="flex items-center justify-between">
           <Link
