@@ -1,20 +1,29 @@
+import { lazy, Suspense } from "react"
 import { BrowserRouter, Routes, Route } from "react-router-dom"
 import { AuthProvider } from "./lib/auth"
 import { ThemeProvider } from "./lib/theme"
 import { LanguageProvider } from "./lib/i18n"
 import { UnsavedGuardProvider } from "./lib/unsavedGuard"
 import { RequireAuth } from "./components/RequireAuth"
+import { Loader } from "./components/Loader"
 import { Landing } from "./pages/Landing"
-import { Login } from "./pages/Login"
-import { Dashboard } from "./pages/Dashboard"
-import { CreatePage } from "./pages/CreatePage"
-import { CreateImages } from "./pages/CreateImages"
-import { CreateAvatar } from "./pages/CreateAvatar"
-import { CreateLanding } from "./pages/CreateLanding"
-import { Pages } from "./pages/Pages"
-import { Integraciones } from "./pages/Integraciones"
-import { Perfil } from "./pages/Perfil"
-import { Configuracion } from "./pages/Configuracion"
+
+// Todo lo que no sea la landing se carga bajo demanda, así la landing
+// no descarga el JS de la app completa (editor, dashboard, etc.) de entrada.
+const Login = lazy(() => import("./pages/Login").then((m) => ({ default: m.Login })))
+const Dashboard = lazy(() => import("./pages/Dashboard").then((m) => ({ default: m.Dashboard })))
+const CreatePage = lazy(() => import("./pages/CreatePage").then((m) => ({ default: m.CreatePage })))
+const CreateImages = lazy(() => import("./pages/CreateImages").then((m) => ({ default: m.CreateImages })))
+const CreateAvatar = lazy(() => import("./pages/CreateAvatar").then((m) => ({ default: m.CreateAvatar })))
+const CreateLanding = lazy(() => import("./pages/CreateLanding").then((m) => ({ default: m.CreateLanding })))
+const Pages = lazy(() => import("./pages/Pages").then((m) => ({ default: m.Pages })))
+const Integraciones = lazy(() => import("./pages/Integraciones").then((m) => ({ default: m.Integraciones })))
+const Perfil = lazy(() => import("./pages/Perfil").then((m) => ({ default: m.Perfil })))
+const Configuracion = lazy(() => import("./pages/Configuracion").then((m) => ({ default: m.Configuracion })))
+
+function RouteFallback() {
+  return <Loader show />
+}
 
 function App() {
   return (
@@ -23,6 +32,7 @@ function App() {
       <ThemeProvider>
       <LanguageProvider>
       <UnsavedGuardProvider>
+        <Suspense fallback={<RouteFallback />}>
         <Routes>
           <Route path="/" element={<Landing />} />
           <Route path="/login" element={<Login />} />
@@ -99,6 +109,7 @@ function App() {
             }
           />
         </Routes>
+        </Suspense>
       </UnsavedGuardProvider>
       </LanguageProvider>
       </ThemeProvider>

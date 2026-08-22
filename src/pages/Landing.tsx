@@ -4,8 +4,8 @@ import { Menu, X, Image as ImageIcon, Link2, LayoutTemplate, Sparkles, ShoppingB
 import { Logo } from "../components/Logo"
 import { Loader } from "../components/Loader"
 import { BorderBeam } from "border-beam"
-import vitaliaPageSkeleton from "../assets/vitalia-page-skeleton.png"
-import vitaliaPageFinished from "../assets/vitalia-page-finished.png"
+import vitaliaPageSkeleton from "../assets/vitalia-page-skeleton.webp"
+import vitaliaPageFinished from "../assets/vitalia-page-finished.webp"
 
 // Reemplazar cada "img" por la URL real de la página/imagen generada cuando estén listas.
 const EXAMPLES = [
@@ -443,11 +443,15 @@ export function Landing() {
                       <img
                         src={vitaliaPageSkeleton}
                         alt=""
+                        loading="lazy"
+                        decoding="async"
                         className="absolute inset-0 h-full w-full scale-[0.97] object-cover object-top [mask-image:linear-gradient(to_bottom,#000_78%,transparent_98%)]"
                       />
                       <img
                         src={vitaliaPageFinished}
                         alt=""
+                        loading="lazy"
+                        decoding="async"
                         className="t-scan-reveal absolute inset-0 h-full w-full object-cover object-top [mask-image:linear-gradient(to_bottom,#000_78%,transparent_98%)]"
                       />
                     </div>
