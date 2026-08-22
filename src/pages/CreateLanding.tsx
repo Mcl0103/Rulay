@@ -13,6 +13,7 @@ import {
 } from "lucide-react"
 import { BorderBeam } from "border-beam"
 import { Sidebar } from "../components/Sidebar"
+import { MobileDevBanner } from "../components/MobileDevBanner"
 import { StaggerHeader } from "../components/StaggerHeader"
 import { useTheme } from "../lib/theme"
 import { useLanguage, type TranslationKey } from "../lib/i18n"
@@ -136,6 +137,7 @@ export function CreateLanding() {
     <div className="flex h-screen bg-(--color-base)">
       <Sidebar />
       <main data-theme={theme} className="flex flex-1 flex-col overflow-y-auto bg-(--color-panel)/40 p-4 pb-24 md:p-6">
+        <MobileDevBanner />
         <Link
           to="/app"
           className="inline-flex items-center gap-2 text-sm text-(--color-muted) transition hover:text-(--color-text)"

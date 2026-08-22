@@ -2,6 +2,7 @@ import { useRef, useState } from "react"
 import { Link, useNavigate } from "react-router-dom"
 import { ArrowLeft, Camera, LogOut } from "lucide-react"
 import { Sidebar } from "../components/Sidebar"
+import { MobileDevBanner } from "../components/MobileDevBanner"
 import { StaggerHeader } from "../components/StaggerHeader"
 import { supabase } from "../lib/supabase"
 import { useAuth } from "../lib/auth"
@@ -65,6 +66,7 @@ export function Perfil() {
     <div className="flex h-screen bg-(--color-base)">
       <Sidebar />
       <main data-theme={theme} className="flex-1 overflow-y-auto bg-(--color-panel)/40 p-4 pb-24 md:p-6">
+        <MobileDevBanner />
         <Link
           to="/app"
           className="inline-flex items-center gap-2 text-sm text-(--color-muted) transition hover:text-(--color-text)"

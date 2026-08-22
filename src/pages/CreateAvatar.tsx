@@ -10,6 +10,7 @@ import {
   X,
 } from "lucide-react"
 import { Sidebar } from "../components/Sidebar"
+import { MobileDevBanner } from "../components/MobileDevBanner"
 import { ClearableSearchInput } from "../components/ClearableSearchInput"
 import { useTheme } from "../lib/theme"
 import { useLanguage, type TranslationKey } from "../lib/i18n"
@@ -182,6 +183,7 @@ export function CreateAvatar() {
       <Sidebar />
       <main data-theme={theme} className="flex min-h-0 flex-1 flex-col overflow-hidden bg-(--color-panel)/40">
         <div className="shrink-0 border-b border-(--color-border) px-6 py-4">
+          <MobileDevBanner />
           <Link
             to="/app"
             className="inline-flex items-center gap-2 text-sm text-(--color-muted) transition hover:text-(--color-text)"

@@ -1,4 +1,5 @@
 import { Sidebar } from "../components/Sidebar"
+import { MobileDevBanner } from "../components/MobileDevBanner"
 import { TopBar } from "../components/TopBar"
 import { PromptCard } from "../components/PromptCard"
 import { StatCards } from "../components/StatCards"
@@ -14,6 +15,7 @@ export function Dashboard() {
     <div className="flex h-screen bg-(--color-base)">
       <Sidebar />
       <main data-theme={theme} className="flex-1 overflow-y-auto bg-(--color-panel)/40 p-4 pb-24 md:p-6">
+        <MobileDevBanner />
         <TopBar label={t("sidebar.dashboard")} />
         <div className="mx-auto mt-10 max-w-2xl">
           <ConnectShopifyBanner />

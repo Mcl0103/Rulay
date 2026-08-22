@@ -6,6 +6,12 @@ export type Lang = "es" | "en"
 // Login quedan fuera a propósito — son la puerta de entrada, sin
 // preferencia de idioma todavía establecida para un visitante nuevo.
 const dict = {
+  // Aviso mobile en desarrollo
+  "mobileBanner.texto": {
+    es: "La versión mobile está en desarrollo y puede fallar. Funciona mejor en PC.",
+    en: "The mobile version is still in development and may have issues. It works better on desktop.",
+  },
+
   // Sidebar
   "sidebar.inicio": { es: "Inicio", en: "Home" },
   "sidebar.dashboard": { es: "Dashboard", en: "Dashboard" },

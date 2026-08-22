@@ -17,6 +17,7 @@ import {
   Sun,
 } from "lucide-react"
 import { Sidebar } from "../components/Sidebar"
+import { MobileDevBanner } from "../components/MobileDevBanner"
 import { StaggerHeader } from "../components/StaggerHeader"
 import { useAuth } from "../lib/auth"
 import { useTheme, type Theme } from "../lib/theme"
@@ -195,6 +196,7 @@ export function Configuracion() {
     <div className="flex h-screen bg-(--color-base)">
       <Sidebar />
       <main data-theme={theme} className="flex-1 overflow-y-auto bg-(--color-panel)/40 p-4 pb-24 md:p-6">
+        <MobileDevBanner />
         <GuardedLink
           to="/app"
           className="inline-flex items-center gap-2 text-sm text-(--color-muted) transition hover:text-(--color-text)"

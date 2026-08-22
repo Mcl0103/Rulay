@@ -2,6 +2,7 @@ import { useEffect, useState } from "react"
 import { ArrowLeft, MessageCircle, Sheet, Zap, Check } from "lucide-react"
 import { Link } from "react-router-dom"
 import { Sidebar } from "../components/Sidebar"
+import { MobileDevBanner } from "../components/MobileDevBanner"
 import { StaggerHeader } from "../components/StaggerHeader"
 import shopifyLogo from "../assets/shopify-logo-white-bg.webp"
 import { useTheme } from "../lib/theme"
@@ -47,6 +48,7 @@ export function Integraciones() {
     <div className="flex h-screen bg-(--color-base)">
       <Sidebar />
       <main data-theme={theme} className="flex-1 overflow-y-auto bg-(--color-panel)/40 p-4 pb-24 md:p-6">
+        <MobileDevBanner />
         <Link
           to="/app"
           className="inline-flex items-center gap-2 text-sm text-(--color-muted) transition hover:text-(--color-text)"

@@ -12,6 +12,7 @@ import {
   Wand2,
 } from "lucide-react"
 import { Sidebar } from "../components/Sidebar"
+import { MobileDevBanner } from "../components/MobileDevBanner"
 import { StaggerHeader } from "../components/StaggerHeader"
 import { BorderBeam } from "border-beam"
 import sparkleIcon from "../assets/sparkle-icon.webp"
@@ -76,6 +77,7 @@ export function CreateImages() {
     <div className="flex h-screen bg-(--color-base)">
       <Sidebar />
       <main data-theme={theme} className="flex flex-1 flex-col overflow-y-auto bg-(--color-panel)/40 p-4 pb-24 md:p-6">
+        <MobileDevBanner />
         <Link
           to="/app"
           className="inline-flex items-center gap-2 text-sm text-(--color-muted) transition hover:text-(--color-text)"
